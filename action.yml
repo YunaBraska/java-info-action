@@ -4,11 +4,11 @@ inputs:
   deep:
     description: 'folder scan ("." == current)'
     required: false
-    default: '-1'
+    default: '.'
   work-dir:
     description: 'folder scan deep (-1 == endless)'
     required: false
-    default: '.'
+    default: '-1'
 outputs:
   java_version:
     description: 'java version - parsed from build files'

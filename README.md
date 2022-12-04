@@ -31,10 +31,14 @@ Reads out the java version from gradle or maven
 ## Example usage
 
 ```yaml
-uses: actions/java-version@main
-with:
-  deep: '-1'
-  work-dir: '.'
+- name: "Get Java Version"
+  id: "java_version"
+  uses: actions/java-version@main
+  with:
+    deep: '-1'
+    work-dir: '.'
+- name: "Print Java Version"
+
 ```
 
 ### \[DEV] Setup Environment
