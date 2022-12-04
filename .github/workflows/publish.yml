@@ -63,6 +63,9 @@ jobs:
         run: |
           mkdir -p __tests__/resources/gradle/empty
           npm ci && npm test
+      - name: "Get Java Version"
+        id: "read_java"
+        uses: YunaBraska/java-version@main
       - name: "Detect version change"
         id: "git"
         run: |
