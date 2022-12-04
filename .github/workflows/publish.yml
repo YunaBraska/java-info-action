@@ -1,4 +1,4 @@
-name: "New Tag NPM"
+name: "RELEASE"
 
 on:
   workflow_dispatch:
@@ -11,9 +11,8 @@ on:
         type: string
         description: "[semver_strategy] e.g. major,minor,patch,rc,meta [default: rc]"
         required: false
-  pull_request:
-    types:
-      - closed
+  schedule:
+    - cron: "0 8 * * *"
 
 jobs:
   tag:
@@ -25,9 +24,6 @@ jobs:
     steps:
       - name: "Validate Input"
         id: "inputs"
-        if: |
-          github.event.pull_request.merged == true &&
-          (github.head_ref == 'main' || github.head_ref == 'master' || github.head_ref == 'default')
         run: |
           if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
 
@@ -39,6 +35,8 @@ jobs:
 
           echo "ref=$ref" >> $GITHUB_OUTPUT
           echo "semver_strategy=$semver_strategy" >> $GITHUB_OUTPUT
+          echo "--------------------- ENVS ---------------------"
+          env
         env:
           ref_A: ${{ inputs.ref }}
           ref_B: ${{ github.event.inputs.ref }}
@@ -46,10 +44,6 @@ jobs:
           semver_strategy_A: ${{ inputs.semver_strategy }}
           semver_strategy_B: ${{ github.event.inputs.semver_strategy }}
           semver_strategy_C: ${{ github.event.client_payload.semver_strategy }}
-      - name: "print"
-        run: |
-          echo "--------------------- ENVS ---------------------"
-          env
       - name: "Checkout"
         uses: actions/checkout@main
         with:

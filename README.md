@@ -13,6 +13,11 @@ Reads out the java version from gradle or maven
     work-dir: '.'
 - name: "Print Java Version"
   run: echo "java_version [${{ steps.read_java.outputs.java_version }}]"
+- name: "Setup Java"
+  uses: actions/setup-java@main
+  with:
+    java-version: ${{ steps.read_java.outputs.java_version }}
+    distribution: 'adopt'
 ```
 
 ### Inputs
@@ -44,7 +49,7 @@ Reads out the java version from gradle or maven
 ### \[DEV] Setup Environment
 
 * `npm install`
-* NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16 
+* NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
 ## TODO

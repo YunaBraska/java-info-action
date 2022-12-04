@@ -1,4 +1,4 @@
-name: "Test NPM"
+name: "TEST"
 
 on:
   workflow_dispatch:
@@ -13,6 +13,12 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     steps:
+      - name: "Validate Input"
+        id: "inputs"
+        run: |
+          if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
+          echo "--------------------- ENVS ---------------------"
+          env
       - name: "Checkout"
         uses: actions/checkout@main
       - name: "Setup Node"
