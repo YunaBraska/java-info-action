@@ -1,6 +1,19 @@
 # java-version
 
-Reads out the java version from gradle or maven
+Reads out the java version from gradle or maven.
+
+It also creates some pre-generated commends dependent on wrapper, and OS. e.g. gradle, gradlew, gradle.bat
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
+
+[![Build][build_shield]][build_link]
+[![Issues][issues_shield]][issues_link]
+[![Commit][commit_shield]][commit_link]
+[![License][license_shield]][license_link]
+[![Tag][tag_shield]][tag_link]
+[![Size][size_shield]][size_shield]
+![Label][label_shield]
+![Label][node_version]
 
 ## Usage
 
@@ -57,7 +70,7 @@ Reads out the java version from gradle or maven
 * [x] Setup test environment
 * [x] Publish
 * [x] Test Pipeline
-* [ ] Deploy Pipeline
+* [x] Deploy Pipeline
   audit fix, npm update --save, ..)
 * [x] Gradle
     * [ ] Update latest gradle
@@ -66,3 +79,32 @@ Reads out the java version from gradle or maven
 * [ ] Maven
 * [ ] Move to typescript
 
+[build_shield]: https://github.com/YunaBraska/java-version/workflows/RELEASE/badge.svg
+
+[build_link]: https://github.com/YunaBraska/java-version/actions?query=workflow%3AMVN_RELEASE
+
+[issues_shield]: https://img.shields.io/github/issues/YunaBraska/java-version?style=flat-square
+
+[issues_link]: https://github.com/YunaBraska/java-version/commits/main
+
+[commit_shield]: https://img.shields.io/github/last-commit/YunaBraska/java-version?style=flat-square
+
+[commit_link]: https://github.com/YunaBraska/java-version/issues
+
+[license_shield]: https://img.shields.io/github/license/YunaBraska/java-version?style=flat-square
+
+[license_link]: https://github.com/YunaBraska/java-version/blob/main/LICENSE
+
+[tag_shield]: https://img.shields.io/github/v/tag/YunaBraska/java-version?style=flat-square
+
+[tag_link]: https://github.com/YunaBraska/java-version/releases
+
+[size_shield]: https://img.shields.io/github/repo-size/YunaBraska/java-version?style=flat-square
+
+[label_shield]: https://img.shields.io/badge/Yuna-QueenInside-blueviolet?style=flat-square
+
+[gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/java-version?style=flat-square
+
+[gitter_link]: https://gitter.im/java-version/Lobby
+
+[node_version]: https://img.shields.io/badge/node-16-blueviolet?style=flat-square
