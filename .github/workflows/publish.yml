@@ -11,9 +11,9 @@ on:
         type: string
         description: "[semver_strategy] e.g. major,minor,patch,rc,meta [default: rc]"
         required: false
-  push:
-    paths-ignore:
-      - '**.md'
+  pull_request:
+    types:
+      - closed
 
 jobs:
   tag:

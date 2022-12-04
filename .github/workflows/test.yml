@@ -27,4 +27,4 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          npm test
+          npm ci

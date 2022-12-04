@@ -1,14 +1,3 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-!**/cdk.out
-infrastructure/cdk.out
-functions/cdk.out
-common/cdk.out
-
 ### STS ###
 .apt_generated
 .classpath
@@ -21,15 +10,6 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -38,5 +18,27 @@ out/
 /.nb-gradle/
 /temp
 
-### VS Code ###
+### Editors ###
 .vscode/
+coverage
+target/
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+!**/cdk.out
+infrastructure/cdk.out
+functions/cdk.out
+common/cdk.out
+*.DS_Store
+.venv
+__pycache__
+*.bat
