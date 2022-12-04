@@ -35,3 +35,6 @@ jobs:
       - name: "Print Java Version"
         run: |
           echo "java_version [${{ steps.read_java.outputs.java_version }}]"
+        with:
+          work-dir: '.'
+          deep: '-1'

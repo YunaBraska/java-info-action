@@ -2,13 +2,13 @@ name: 'Java Version Reader'
 description: 'Detects the Java Version of Gradle and Maven'
 inputs:
   deep:
-    description: 'folder scan ("." == current)'
-    required: false
-    default: '.'
-  work-dir:
     description: 'folder scan deep (-1 == endless)'
     required: false
     default: '-1'
+  work-dir:
+    description: 'folder scan ("." == current)'
+    required: false
+    default: '.'
 outputs:
   java_version:
     description: 'java version - parsed from build files'
