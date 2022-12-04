@@ -7,6 +7,7 @@ try {
     let workDir = core.getInput('work-dir');
     let deep = parseInt(core.getInput('deep'));
     if (!workDir || workDir === ".") {
+        console.log('reading default working directory]');
         workDir = getWorkingDirectory()
     }
     console.log('deep [' + (!deep ? 1 : deep) + ']');
