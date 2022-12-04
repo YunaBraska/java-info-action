@@ -1,0 +1,46 @@
+name: "TEST"
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest ]
+    steps:
+      - name: "Validate Input"
+        id: "inputs"
+        run: |
+          if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
+          echo "--------------------- ENVS ---------------------"
+          env
+      - name: "Checkout"
+        uses: actions/checkout@main
+      - name: "Setup Node"
+        uses: actions/setup-node@main
+        with:
+          node-version: "16"
+          cache: npm
+      - name: "update dependencies"
+        run: |
+          npm outdated 
+          npm update --save
+          npm audit fix --force
+      - name: "Run Tests"
+        run: |
+          mkdir -p __tests__/resources/gradle/empty
+          npm ci && npm test
+      - name: "Get Java Version"
+        id: "read_java"
+        uses: YunaBraska/java-version@main
+        with:
+          work-dir: '.'
+          deep: '-1'
+      - name: "Print Java Version"
+        run: |
+          echo "java_version [${{ steps.read_java.outputs.java_version }}]"

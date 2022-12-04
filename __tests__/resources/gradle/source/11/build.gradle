@@ -1,0 +1,27 @@
+buildscript {
+  ext {
+    springBootVersion = '2.1.4.RELEASE'
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  }
+}
+
+plugins {
+  id 'groovy'
+  id 'java'
+}
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+sourceCompatibility = 11
+
+tasks.withType(JavaCompile) {
+  options.encoding = 'utf-8'
+}
+
+tasks.withType(GroovyCompile) {
+  options.encoding = 'utf-8'
+  groovyOptions.encoding = 'utf-8'
+}
