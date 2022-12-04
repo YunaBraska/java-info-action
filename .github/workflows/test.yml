@@ -32,9 +32,9 @@ jobs:
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-version@feat/add_workflows
-      - name: "Print Java Version"
-        run: |
-          echo "java_version [${{ steps.read_java.outputs.java_version }}]"
         with:
           work-dir: '.'
           deep: '-1'
+      - name: "Print Java Version"
+        run: |
+          echo "java_version [${{ steps.read_java.outputs.java_version }}]"
