@@ -121,14 +121,14 @@ jobs:
           skip_checkout: true
           disable_globbing: true
           create_branch: false
-    tag_outputs:
-      needs: "tag"
-      runs-on: ubuntu-latest
-      steps:
-        - name: "print"
-          run: |
-            echo "-------------------- OUTPUTS --------------------"
-            echo "semver                    [${{needs.tag.outputs.semver}}]"
-            echo "new_version               [${{needs.tag.outputs.new_version}}]"
-            echo "--------------------- ENVS ---------------------"
-            env
+  tag_outputs:
+    needs: "tag"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "print"
+        run: |
+          echo "-------------------- OUTPUTS --------------------"
+          echo "semver                    [${{needs.tag.outputs.semver}}]"
+          echo "new_version               [${{needs.tag.outputs.new_version}}]"
+          echo "--------------------- ENVS ---------------------"
+          env
