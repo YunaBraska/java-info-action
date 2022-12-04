@@ -1,0 +1,30 @@
+name: "Test NPM"
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@main
+      - name: "Setup Node"
+        uses: actions/setup-node@main
+        with:
+          node-version: *
+          cache: npm
+      - name: "update dependencies"
+        run: |
+          npm outdated 
+          npm update --save
+          npm audit fix --force
+      - name: "Run Tests"
+        run: |
+          npm test
