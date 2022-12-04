@@ -37,7 +37,7 @@ jobs:
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
-        uses: YunaBraska/java-version@feat/add_workflows
+        uses: YunaBraska/java-version@${{ github.ref_name || github.head_ref }}
         with:
           work-dir: '.'
           deep: '-1'
