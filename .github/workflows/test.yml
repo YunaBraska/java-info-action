@@ -27,6 +27,5 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          npm ci
-          npm fund
-          npm test
+          mkdir -p __tests__/resources/gradle/empty
+          npm ci && npm test
