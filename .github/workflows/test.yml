@@ -29,3 +29,6 @@ jobs:
         run: |
           mkdir -p __tests__/resources/gradle/empty
           npm ci && npm test
+      - name: "Read Gradle"
+        id: "gradle"
+        uses: YunaBraska/java-version@feat/add_workflows
