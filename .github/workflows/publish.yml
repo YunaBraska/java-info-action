@@ -58,7 +58,7 @@ jobs:
       - name: "Setup Node"
         uses: actions/setup-node@main
         with:
-          node-version: "*"
+          node-version: "16"
           cache: npm
       - name: "update dependencies"
         run: |
@@ -67,7 +67,8 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          npm test
+          mkdir -p __tests__/resources/gradle/empty
+          npm ci && npm test
       - name: "Detect version change"
         id: "git"
         run: |

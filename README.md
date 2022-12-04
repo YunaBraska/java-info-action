@@ -60,4 +60,5 @@ with:
     * [ ] Update latest java version
     * [ ] Parse encoding
 * [ ] Maven
+* [ ] Move to typescript
 
