@@ -18,7 +18,7 @@ jobs:
       - name: "Setup Node"
         uses: actions/setup-node@main
         with:
-          node-version: *
+          node-version: "*"
           cache: npm
       - name: "update dependencies"
         run: |
