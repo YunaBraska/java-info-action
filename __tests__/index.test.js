@@ -12,6 +12,7 @@ const path = require('path');
 test('[GRADLE] Read empty dir', () => {
     let result = readGradle(path.join(__dirname, 'resources/gradle/empty'), -1);
     expect(result['java_version']).toEqual(17)
+    expect(result['is_gradle']).toEqual(false)
     expect(result['has_wrapper']).toEqual(false)
     expect(result['builder_version']).toEqual(null)
     expect(result['cmd']).toEqual('gradle')
@@ -20,12 +21,15 @@ test('[GRADLE] Read empty dir', () => {
 test('[GRADLE] Read highest Java Version should be 17', () => {
     let result_src = readGradle(path.join(__dirname, 'resources/gradle/source'), -1);
     expect(result_src['java_version']).toEqual(17)
+    expect(result_src['is_gradle']).toEqual(true)
     expect(result_src['has_wrapper']).toEqual(true)
+    expect(result_src['is_gradle']).toEqual(true)
     expect(result_src['builder_version']).toEqual('7.5')
     expect(result_src['cmd']).toEqual(process.platform === "win32"? 'gradle.bat' : './gradlew')
 
     let result_lv = readGradle(path.join(__dirname, 'resources/gradle/language_version'), -1);
     expect(result_lv['java_version']).toEqual(17)
+    expect(result_lv['is_gradle']).toEqual(true)
     expect(result_lv['has_wrapper']).toEqual(true)
     expect(result_lv['builder_version']).toEqual('7.5')
     expect(result_lv['cmd']).toEqual(process.platform === "win32"? 'gradle.bat' : './gradlew')
@@ -34,12 +38,14 @@ test('[GRADLE] Read highest Java Version should be 17', () => {
 test('[GRADLE] Read highest Java Version with deep limit 1 should be 11', () => {
     let result_src = readGradle(path.join(__dirname, 'resources/gradle/source'), 1);
     expect(result_src['java_version']).toEqual(11)
+    expect(result_src['is_gradle']).toEqual(true)
     expect(result_src['has_wrapper']).toEqual(false)
     expect(result_src['builder_version']).toEqual(null)
     expect(result_src['cmd']).toEqual('gradle')
 
     let result_lv = readGradle(path.join(__dirname, 'resources/gradle/language_version'), 1);
     expect(result_lv['java_version']).toEqual(11)
+    expect(result_lv['is_gradle']).toEqual(true)
     expect(result_lv['has_wrapper']).toEqual(false)
     expect(result_lv['builder_version']).toEqual(null)
     expect(result_lv['cmd']).toEqual('gradle')
@@ -53,6 +59,7 @@ test('[GRADLE] Read each file should have expected result', () => {
         let hasWrapper = dir.includes('wrapper');
         expect(result['java_version']).toEqual(javaVersionOfPath(dir))
         expect(result['has_wrapper']).toEqual(hasWrapper)
+        expect(result['is_gradle']).toEqual(true)
         expect(result['builder_version']).toEqual(hasWrapper? '7.5' : null)
         expect(result['cmd']).toEqual(hasWrapper? (process.platform === "win32"? 'gradle.bat' : './gradlew') : 'gradle')
     });

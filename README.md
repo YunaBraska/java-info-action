@@ -1,13 +1,26 @@
-# java-version (WIP started at 20.11.22)
+# java-version
 
 Reads out the java version from gradle or maven
+
+## Usage
+
+```yaml
+- name: "Get Java Version"
+  id: "read_java"
+  uses: actions/java-version@main
+  with:
+    deep: '-1'
+    work-dir: '.'
+- name: "Print Java Version"
+  run: echo "java_version [${{ steps.read_java.outputs.java_version }}]"
+```
 
 ### Inputs
 
 | parameter | default | description                      |
 |-----------|---------|----------------------------------|
 | work-dir  | '.'     | folder scan ('.' == current)     |
-| deep      | 1       | folder scan deep (-1 == endless) |
+| deep      | -1      | folder scan deep (-1 == endless) |
 
 ### Outputs
 
@@ -28,28 +41,11 @@ Reads out the java version from gradle or maven
 | cmd_update_parent  | -            | test command e.g. gradle check / maven versions:update-parent -B -q -DgenerateBackupPoms=false       |
 | cmd_update_wrapper | -            | test command e.g. gradle wrapper --gradle-version 7.5.1 / maven -B -q -N io.takari:maven:wrapper     |
 
-## Example usage
-
-```yaml
-- name: "Get Java Version"
-  id: "java_version"
-  uses: actions/java-version@main
-  with:
-    deep: '-1'
-    work-dir: '.'
-- name: "Print Java Version"
-
-```
-
 ### \[DEV] Setup Environment
 
 * `npm install`
-
-### \[DEV] Reinstall dependencies
-
-* `npm install --save-dev jest`
-* `npm install @actions/core -save`
-* `npm install @actions/io`
+* NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16 
+* Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
 ## TODO
 
@@ -57,7 +53,6 @@ Reads out the java version from gradle or maven
 * [x] Publish
 * [x] Test Pipeline
 * [ ] Deploy Pipeline
-* [ ] Update Pipeline (npm config set prefix "${HOME}/npm", export PATH="${PATH}:${HOME}/npm/bin", npm install, npm
   audit fix, npm update --save, ..)
 * [x] Gradle
     * [ ] Update latest gradle
