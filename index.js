@@ -55,6 +55,7 @@ function readGradle(workDir, deep) {
             }
         }
     )
+    result['is_gradle'] = !!result['java_version'];
     result['java_version'] = result['java_version'] ? result['java_version'] : javaLTS;
     result['cmd'] = result['has_wrapper'] ? (process.platform === "win32" ? 'gradle.bat' : './gradlew') : 'gradle'
     result['cmd_test'] = result['cmd'] + ' clean test'
