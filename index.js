@@ -2,17 +2,22 @@
 const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
+const xmlReader = require('xmldoc');
 
 try {
     let workDir = core.getInput('work-dir');
+    let jvFallback = core.getInput('jv-fallback');
     let deep = parseInt(core.getInput('deep'));
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory()
     }
+    //TODO: auto update java version fallback
+    console.log('jv_fallback [' + (!jvFallback ? 17 : jvFallback) + ']');
     console.log('deep [' + (!deep ? 1 : deep) + ']');
     console.log(`work-dir [${workDir}]`);
-    let result = readGradle(workDir, !deep ? 1 : deep);
-    //TODO: !gradle['is_gradle'] readMaven
+
+    result = run(workDir, deep, jvFallback);
+
     console.log(JSON.stringify(result, null, 4))
 
     for (const [key, value] of Object.entries(result)) {
@@ -22,17 +27,108 @@ try {
     core.setFailed(error.message);
 }
 
-function readGradle(workDir, deep) {
+function run(workDir, deep, jvFallback) {
+    //DEFAULTS
+    let result = {};
+    result['cmd'] = null
+    result['cmd_test'] = null
+    result['cmd_build'] = null
+    result['cmd_test_build'] = null
+    result['cmd_update_deps'] = null
+    result['cmd_update_plugs'] = null
+    result['cmd_update_props'] = null
+    result['cmd_update_parent'] = null
+    result['cmd_update_wrapper'] = null
+    result['java_version'] = null;
+    result['has_wrapper'] = false;
+    result['builder_version'] = null;
+    result['is_gradle'] = false
+    result['is_maven'] = false
+
+    //PROCESSING
+    let mavenFiles = listMavenFiles(workDir, deep);
+    let gradleFiles = listGradleFiles(workDir, deep);
+    if (gradleFiles.length > 0) {
+        result = readGradle(gradleFiles, jvFallback);
+    } else if (mavenFiles.length > 0) {
+        result = readMaven(mavenFiles);
+    }
+
+    //POST PROCESSING
+    result['java_version'] = result['java_version'] ? result['java_version'] : jvFallback;
+    result['java_version_legacy'] = result['java_version'] && result['java_version'] < 10 ? '1.' + result['java_version'] : result['java_version'] ? result['java_version'].toString() : result['java_version'];
+    result['is_gradle'] = gradleFiles.length > 0;
+    result['is_maven'] = mavenFiles.length > 0;
+    return result;
+}
+
+function readMaven(mavenFiles) {
+    let result = {};
+    result['java_version'] = null;
+    result['has_wrapper'] = false;
+    result['builder_version'] = null;
+    result['is_maven'] = mavenFiles.length > 0;
+    mavenFiles.forEach(file => {
+            try {
+                let dir = path.dirname(file);
+                let wrapperMapFile = path.join(dir, '.mvn', 'wrapper', 'maven-wrapper.properties');
+
+                let javaVersion = readJavaVersionMaven(file);
+                if (javaVersion && (!result['java_version'] || result['java_version'] < javaVersion)) {
+                    result['java_version'] = javaVersion;
+                }
+
+                if (fs.existsSync(path.join(dir, 'mvnw,cmd')) || fs.existsSync(path.join(dir, 'mvnw')) || fs.existsSync(wrapperMapFile)) {
+                    result['has_wrapper'] = true;
+                }
+
+                if (fs.existsSync(wrapperMapFile)) {
+                    result['builder_version'] = readBuilderVersion(wrapperMapFile, result['builder_version']);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    )
+
+    result['cmd'] = result['has_wrapper'] ? (process.platform === "win32" ? 'mvn.cmd' : './mvnw') : 'mvn'
+    result['cmd_test'] = result['cmd'] + ' clean test'
+    result['cmd_build'] = result['cmd'] + ' clean package -DskipTests'
+    result['cmd_test_build'] = result['cmd'] + ' clean package'
+    result['cmd_update_deps'] = result['cmd'] + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false'
+    result['cmd_update_plugs'] = result['cmd'] + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false'
+    result['cmd_update_props'] = result['cmd'] + ' versions:update-properties -B -q -DgenerateBackupPoms=false'
+    result['cmd_update_parent'] = result['cmd'] + ' versions:update-parent -B -q -DgenerateBackupPoms=false'
+    result['cmd_update_wrapper'] = result['cmd'] + ' -B -q -N io.takari:maven:wrapper'
+    return result;
+}
+
+function readJavaVersionMaven(file) {
+    let document = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
+    let propertyNodes = getNodeByPath(document, ['properties'])[0]?.children.filter(node => node.type === 'element');
+    let javaVersions = getNodeByPath(document, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'])[0]?.children.filter(node => node.type === 'element')?.map(e => e.val?.trim())
+    let propertyMap = Object.fromEntries(propertyNodes.map(e => [e.name, e.val]))
+
+    let result;
+    javaVersions?.forEach(jv => {
+        let version = javaVersionOf(jv.startsWith('${') ? propertyMap[jv.substring(2, jv.length - 1)] : jv);
+        result = version && (!result || result < version) ? version : result;
+    })
+    for (const pjv of ['java.version', 'java-version', 'maven.compiler.source', 'maven.compiler.target', 'maven.compiler.release']) {
+        let jv = propertyMap[pjv];
+        let version = jv ? javaVersionOf(jv.startsWith('${') ? propertyMap[jv.substring(2, jv.length - 1)] : jv) : undefined;
+        result = version && (!result || result < version) ? version : result;
+    }
+    return result;
+}
+
+function readGradle(gradleFiles) {
     let result = {}
-    let gradleFiles = listFiles(workDir, deep, 'build\.gradle.*');
-    //TODO: auto update this numbers
     let gradleLTS = '7.5.1';
-    let javaLTS = 17;
     result['java_version'] = null;
     result['has_wrapper'] = false;
     result['builder_version'] = null;
     result['is_gradle'] = gradleFiles.length > 0;
-    result['is_gradle'] = false
     gradleFiles.forEach(file => {
             try {
                 let dir = path.dirname(file);
@@ -48,15 +144,13 @@ function readGradle(workDir, deep) {
                 }
 
                 if (fs.existsSync(wrapperMapFile)) {
-                    result['builder_version'] = readBuilderVersionGradle(wrapperMapFile, result['builder_version']);
+                    result['builder_version'] = readBuilderVersion(wrapperMapFile, result['builder_version']);
                 }
             } catch (err) {
                 console.error(err);
             }
         }
     )
-    result['is_gradle'] = !!result['java_version'];
-    result['java_version'] = result['java_version'] ? result['java_version'] : javaLTS;
     result['cmd'] = result['has_wrapper'] ? (process.platform === "win32" ? 'gradle.bat' : './gradlew') : 'gradle'
     result['cmd_test'] = result['cmd'] + ' clean test'
     result['cmd_build'] = result['cmd'] + ' clean build -x test'
@@ -69,11 +163,11 @@ function readGradle(workDir, deep) {
     return result;
 }
 
-function readBuilderVersionGradle(wrapperMapFile, fallback) {
+function readBuilderVersion(wrapperMapFile, fallback) {
     if (fs.existsSync(wrapperMapFile)) {
         let wrapperMap = readPropertiesGradle(wrapperMapFile);
         let distributionUrl = wrapperMap['distributionUrl']
-        let builderVersion = distributionUrl ? new RegExp('(\\d[\._]?)+').exec(distributionUrl) : null;
+        let builderVersion = distributionUrl ? new RegExp('(\\d[\._]?){2,}').exec(distributionUrl) : null;
         return builderVersion ? builderVersion[0] : fallback;
     }
 }
@@ -113,8 +207,16 @@ function readPropertiesGradle(file) {
     return result;
 }
 
+function listGradleFiles(workDir, deep) {
+    return listFiles(workDir, !deep ? 1 : deep, 'build\.gradle.*');
+}
+
+function listMavenFiles(workDir, deep) {
+    return listFiles(workDir, !deep ? 1 : deep, 'pom.*\.xml');
+}
+
 function listFiles(dir, deep, filter, resultList, deep_current) {
-    deep = deep || -1
+    deep = deep || 1
     deep_current = deep_current || 0
     resultList = resultList || []
     if (deep > -1 && deep_current > deep) {
@@ -137,4 +239,27 @@ function getWorkingDirectory() {
     return (_a = process.env['GITHUB_WORKSPACE']) !== null && _a !== void 0 ? _a : process.cwd();
 }
 
-module.exports = readGradle;
+function getNodeByPath(node, nodeNames, index) {
+    index = index || 0;
+    if (nodeNames.length === index) {
+        return [node];
+    }
+
+    let nodeName = nodeNames[index].split('|');
+    return node.childrenNamed(nodeName[0])
+        .filter(node => node.type === 'element')
+        .filter(node => matchFilter(node, nodeName[1]))
+        .filter(n => n.childrenNamed(nodeNames[index + 1]))
+        .flatMap(n => getNodeByPath(n, nodeNames, index + 1))
+}
+
+function matchFilter(node, filter) {
+    if (!node || !filter) {
+        return true;
+    }
+    let kv = filter.split('=');
+    let childNode = node.childrenNamed(kv[0])
+    return childNode && childNode[0]?.val === kv[1];
+}
+
+module.exports = {run, listGradleFiles, listMavenFiles};

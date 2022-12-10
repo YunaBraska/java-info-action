@@ -61,7 +61,6 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          mkdir -p __tests__/resources/gradle/empty
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
@@ -101,9 +100,6 @@ jobs:
           echo "new_version [$new_version]"
           
           [[ "${new_version}" == \"*\" || "${new_version}" == \'*\' ]] && new_version="${new_version:1:-1}"
-          version_file=$(find . -name "version.txt" -type f)
-          version_file=${version_file:-version.txt}
-          echo "$new_version" > $version_file
           
           rm -rf target/semver.py
           echo "new_version=$new_version" >> $GITHUB_OUTPUT

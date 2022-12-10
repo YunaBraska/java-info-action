@@ -34,7 +34,6 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          mkdir -p __tests__/resources/gradle/empty
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
@@ -42,6 +41,7 @@ jobs:
         with:
           work-dir: '.'
           deep: '-1'
+          jv-fallback: 8
       - name: "Print Java Version"
         run: |
           echo "java_version [${{ steps.read_java.outputs.java_version }}]"

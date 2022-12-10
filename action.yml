@@ -9,6 +9,10 @@ inputs:
     description: 'folder scan ("." == current)'
     required: false
     default: '.'
+  jv-fallback:
+    description: 'java version fallback if no java version was found'
+    required: false
+    default: '17'
 outputs:
   java_version:
     description: 'java version - parsed from build files'
