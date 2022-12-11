@@ -22,7 +22,7 @@ try {
     result.set('jv-fallback', jvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
-    console.log(JSON.stringify(Array.from(result), null, 4))
+    console.log(JSON.stringify(Object.fromEntries(result), null, 4))
 
     result.forEach((value, key) => {
         core.setOutput(key, value);
