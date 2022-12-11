@@ -13,15 +13,12 @@ try {
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace);
     }
-    //TODO: auto update java version fallback
-    console.log('jv_fallback [' + (!jvFallback ? 17 : jvFallback) + ']');
-    console.log('deep [' + (!deep ? 1 : deep) + ']');
-    console.log(`work-dir [${workDir}]`);
-    let result = run(workDir, deep, jvFallback);
-    result.set('GITHUB_WORKSPACE', workspace || null);
-    result.set('deep', deep);
+    //TODO: auto update java & gradle versions
+    let result = run(workDir, deep || 1, jvFallback || 17);
+    result.set('deep', deep || 1);
     result.set('work-dir', workDir);
-    result.set('jv-fallback', jvFallback);
+    result.set('jv-fallback', jvFallback || 17);
+    result.set('GITHUB_WORKSPACE', workspace || null);
     console.log(JSON.stringify(result, null, 4));
     for (const [key, value] of Object.entries(result)) {
         core.setOutput(key, value);
