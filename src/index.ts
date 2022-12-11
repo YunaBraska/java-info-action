@@ -8,24 +8,25 @@ const path = require('path');
 const xmlReader = require('xmldoc');
 
 try {
+    //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
-    let jvFallback = core.getInput('jv-fallback');
-    let deep = parseInt(core.getInput('deep'));
+    let jvFallback = core.getInput('jv-fallback') || 17;
+    let deep = parseInt(core.getInput('deep')) || 1;
+    let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
-        workDir = getWorkingDirectory()
+        workDir = getWorkingDirectory(workspace)
     }
-    //TODO: auto update java version fallback
-    console.log('jv_fallback [' + (!jvFallback ? 17 : jvFallback) + ']');
-    console.log('deep [' + (!deep ? 1 : deep) + ']');
-    console.log(`work-dir [${workDir}]`);
-
     let result = run(workDir, deep, jvFallback);
+    result.set('deep', deep);
+    result.set('work-dir', workDir);
+    result.set('jv-fallback', jvFallback);
+    result.set('GITHUB_WORKSPACE', workspace || null);
 
-    console.log(JSON.stringify(result, null, 4))
+    console.log(JSON.stringify(Object.fromEntries(result), null, 4))
 
-    for (const [key, value] of Object.entries(result)) {
+    result.forEach((value, key) => {
         core.setOutput(key, value);
-    }
+    })
 } catch (e) {
     if (typeof e === "string") {
         core.setFailed(e.toUpperCase());
@@ -242,9 +243,8 @@ function listFiles(dir: PathOrFileDescriptor, deep: number, filter: string, resu
 }
 
 
-function getWorkingDirectory(): PathOrFileDescriptor {
-    let _a;
-    return (_a = process.env['GITHUB_WORKSPACE']) !== null && _a !== void 0 ? _a : process.cwd();
+function getWorkingDirectory(workspace: string | undefined | null): PathOrFileDescriptor {
+    return workspace && fs.existsSync(workspace) ? workspace : process.cwd();
 }
 
 function getNodeByPath(node: XmlElement, nodeNames: string[], index: number): XmlElement[] {
