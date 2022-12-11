@@ -32,17 +32,18 @@ jobs:
           npm outdated 
           npm update --save
           npm audit fix --force
+          tsc
       - name: "Run Tests"
         run: |
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
-        uses: YunaBraska/java-version@main
+        uses: YunaBraska/java-version@add_pipeline_check
         with:
           work-dir: '.'
           deep: '-1'
           jv-fallback: 8
-      - name: "Print Java Version"
+      - name: "Validate Java Version"
         run: |
           echo "java_version [${{ steps.read_java.outputs.java_version }}]"
           if [ "${{ steps.read_java.outputs.java_version }}" != "17" ]; then echo "Unexpected Java Version [${{ steps.read_java.outputs.java_version }}] should have been 17"; exit 1; fi
