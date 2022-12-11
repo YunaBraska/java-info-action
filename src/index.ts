@@ -26,10 +26,12 @@ try {
     result.set('jv-fallback', jvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
+    console.log(`result [${result.size}]`)
     console.log(JSON.stringify(result, null, 4))
 
     for (const [key, value] of Object.entries(result)) {
         core.setOutput(key, value);
+        console.log(`key [${key}], key [${value}]`)
     }
 } catch (e) {
     if (typeof e === "string") {
@@ -41,7 +43,6 @@ try {
 
 function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number): Map<string, string | number | boolean | null> {
     //DEFAULTS
-    console.log(`AA`);
     let result = new Map<string, string | number | boolean | null>([
         ['cmd', null],
         ['cmd_test', null],
@@ -58,18 +59,15 @@ function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number): M
         ['is_gradle', false],
         ['is_maven', false]
     ]);
-    console.log(`BB`);
     //PROCESSING
     let mavenFiles = listMavenFiles(workDir, deep);
     let gradleFiles = listGradleFiles(workDir, deep);
     if (gradleFiles.length > 0) {
         result = readGradle(gradleFiles, result);
-        console.log(`CC`);
     } else if (mavenFiles.length > 0) {
-        console.log(`DD`);
         result = readMaven(mavenFiles, result);
     }
-    console.log(`EE`);
+
     //POST PROCESSING
     result.set('java_version', result.get('java_version') ? (result.get('java_version') as number) : jvFallback);
 
