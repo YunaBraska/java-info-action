@@ -9,6 +9,7 @@ const fs = require('fs');
 test('[GRADLE] Read empty dir', () => {
     let dir = createEmptyDir(path.join(__dirname, 'resources/gradle/empty'));
     let result = main.run(dir, -1, 17);
+    console.log(JSON.stringify(result, null, 4))
     expect(result.get('java_version')).toEqual(17)
     expect(result.get('is_gradle')).toEqual(false)
     expect(result.get('is_maven')).toEqual(false)

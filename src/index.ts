@@ -8,6 +8,7 @@ const path = require('path');
 const xmlReader = require('xmldoc');
 
 try {
+    //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
     let jvFallback = core.getInput('jv-fallback') || 17;
     let deep = parseInt(core.getInput('deep')) || 1;
@@ -15,19 +16,13 @@ try {
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace)
     }
-    console.log(`deep [${deep}]`)
-    console.log(`workDir [${workDir}]`)
-    console.log(`workspace [${workspace}]`)
-    console.log(`jvFallback [${jvFallback}]`)
-    //TODO: auto update java & gradle versions
     let result = run(workDir, deep, jvFallback);
     result.set('deep', deep);
     result.set('work-dir', workDir);
     result.set('jv-fallback', jvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
-    console.log(`result [${result.size}]`)
-    console.log(JSON.stringify(result, null, 4))
+    console.log(JSON.stringify(Array.from(result), null, 4))
 
     result.forEach((value, key) => {
         core.setOutput(key, value);
