@@ -9,17 +9,21 @@ const xmlReader = require('xmldoc');
 
 try {
     let workDir = core.getInput('work-dir');
-    let jvFallback = core.getInput('jv-fallback');
-    let deep = parseInt(core.getInput('deep'));
-    let workspace = process.env['GITHUB_WORKSPACE']?.toString();
+    let jvFallback = core.getInput('jv-fallback') || 17;
+    let deep = parseInt(core.getInput('deep')) || 1;
+    let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace)
     }
+    console.log(`deep [${deep}]`)
+    console.log(`workDir [${workDir}]`)
+    console.log(`workspace [${workspace}]`)
+    console.log(`jvFallback [${jvFallback}]`)
     //TODO: auto update java & gradle versions
-    let result = run(workDir, deep || 1, jvFallback || 17);
-    result.set('deep', deep || 1);
+    let result = run(workDir, deep, jvFallback);
+    result.set('deep', deep);
     result.set('work-dir', workDir);
-    result.set('jv-fallback', jvFallback || 17);
+    result.set('jv-fallback', jvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
     console.log(JSON.stringify(result, null, 4))

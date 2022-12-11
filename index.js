@@ -1,6 +1,6 @@
 "use strict";
 var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
@@ -13,6 +13,8 @@ try {
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace);
     }
+    console.log(`workDir [${workDir}]`)
+    console.log(`workDir [${workDir}]`)
     //TODO: auto update java & gradle versions
     let result = run(workDir, deep || 1, jvFallback || 17);
     result.set('deep', deep || 1);
@@ -23,15 +25,14 @@ try {
     for (const [key, value] of Object.entries(result)) {
         core.setOutput(key, value);
     }
-}
-catch (e) {
+} catch (e) {
     if (typeof e === "string") {
         core.setFailed(e.toUpperCase());
-    }
-    else if (e instanceof Error) {
+    } else if (e instanceof Error) {
         core.setFailed(e.message);
     }
 }
+
 function run(workDir, deep, jvFallback) {
     //DEFAULTS
     let result = new Map([
@@ -55,8 +56,7 @@ function run(workDir, deep, jvFallback) {
     let gradleFiles = listGradleFiles(workDir, deep);
     if (gradleFiles.length > 0) {
         result = readGradle(gradleFiles, result);
-    }
-    else if (mavenFiles.length > 0) {
+    } else if (mavenFiles.length > 0) {
         result = readMaven(mavenFiles, result);
     }
     //POST PROCESSING
@@ -66,6 +66,7 @@ function run(workDir, deep, jvFallback) {
     result.set('is_maven', mavenFiles.length > 0);
     return result;
 }
+
 function readMaven(mavenFiles, result) {
     result.set('is_maven', mavenFiles.length > 0);
     mavenFiles.forEach(file => {
@@ -82,8 +83,7 @@ function readMaven(mavenFiles, result) {
             if (fs.existsSync(wrapperMapFile)) {
                 result.set('builder_version', readBuilderVersion(wrapperMapFile, result.get('builder_version')));
             }
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     });
@@ -98,11 +98,15 @@ function readMaven(mavenFiles, result) {
     result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q -N io.takari:maven:wrapper');
     return result;
 }
+
 function readJavaVersionMaven(file) {
     var _a, _b, _c, _d;
-    let document = new xmlReader.XmlDocument(fs.readFileSync(file, { encoding: 'utf-8' }));
+    let document = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
     let propertyMap = new Map((_b = (_a = getNodeByPath(document, ['properties'], 0)[0]) === null || _a === void 0 ? void 0 : _a.children.filter(node => node.type === 'element')) === null || _b === void 0 ? void 0 : _b.map(node => [node.name, node.val]));
-    let javaVersions = (_d = (_c = getNodeByPath(document, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'], 0)[0]) === null || _c === void 0 ? void 0 : _c.children.filter(node => node.type === 'element')) === null || _d === void 0 ? void 0 : _d.map(node => { var _a; return (_a = node.val) === null || _a === void 0 ? void 0 : _a.trim(); });
+    let javaVersions = (_d = (_c = getNodeByPath(document, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'], 0)[0]) === null || _c === void 0 ? void 0 : _c.children.filter(node => node.type === 'element')) === null || _d === void 0 ? void 0 : _d.map(node => {
+        var _a;
+        return (_a = node.val) === null || _a === void 0 ? void 0 : _a.trim();
+    });
     let result = null;
     javaVersions === null || javaVersions === void 0 ? void 0 : javaVersions.forEach(jv => {
         let version = javaVersionOf(jv.startsWith('${') ? propertyMap.get(jv.substring(2, jv.length - 1)) : jv);
@@ -115,6 +119,7 @@ function readJavaVersionMaven(file) {
     }
     return result;
 }
+
 function readGradle(gradleFiles, result) {
     let gradleLTS = '7.5.1';
     result.set('is_gradle', gradleFiles.length > 0);
@@ -132,8 +137,7 @@ function readGradle(gradleFiles, result) {
             if (fs.existsSync(wrapperMapFile)) {
                 result.set('builder_version', readBuilderVersion(wrapperMapFile, result.get('builder_version')));
             }
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
         }
     });
@@ -148,6 +152,7 @@ function readGradle(gradleFiles, result) {
     result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version ' + gradleLTS);
     return result;
 }
+
 function readBuilderVersion(wrapperMapFile, fallback) {
     if (fs.existsSync(wrapperMapFile.toString())) {
         let wrapperMap = readPropertiesGradle(wrapperMapFile);
@@ -157,6 +162,7 @@ function readBuilderVersion(wrapperMapFile, fallback) {
     }
     return fallback;
 }
+
 function javaVersionOf(string) {
     if (string) {
         string = string.includes("_") ? string.substring(string.indexOf("_") + 1) : string;
@@ -165,21 +171,22 @@ function javaVersionOf(string) {
     }
     return null;
 }
+
 function readJavaVersionGradle(file) {
     let propertyMap = readPropertiesGradle(file);
     let value = propertyMap.get('sourceCompatibility') || propertyMap.get('targetCompatibility');
     return value ? javaVersionOf(propertyMap.get(value) || value) : null;
 }
+
 function readPropertiesGradle(file) {
     let result = new Map;
-    fs.readFileSync(file, { encoding: 'utf-8' }).split(/\r?\n/).forEach(function (line) {
+    fs.readFileSync(file, {encoding: 'utf-8'}).split(/\r?\n/).forEach(function (line) {
         let eq = line.indexOf('=');
         if (eq > 0) {
             let key = line.substring(0, eq).trim();
             let spaceIndex = key.lastIndexOf(' ');
             result.set(spaceIndex > 0 ? key.substring(spaceIndex + 1).trim() : key, line.substring(eq + 1).trim().replace(/['"]+/g, ''));
-        }
-        else if (!result.get('sourceCompatibility') && !result.get('targetCompatibility') && line.includes('languageVersion.set')) {
+        } else if (!result.get('sourceCompatibility') && !result.get('targetCompatibility') && line.includes('languageVersion.set')) {
             result.set('targetCompatibility', line.trim()
                 .replace('JavaLanguageVersion', '')
                 .replace('languageVersion.set', '')
@@ -190,12 +197,15 @@ function readPropertiesGradle(file) {
     });
     return result;
 }
+
 function listGradleFiles(workDir, deep) {
     return listFiles(workDir, !deep ? 1 : deep, 'build\.gradle.*', [], 0);
 }
+
 function listMavenFiles(workDir, deep) {
     return listFiles(workDir, !deep ? 1 : deep, 'pom.*\.xml', [], 0);
 }
+
 function listFiles(dir, deep, filter, resultList, deep_current) {
     deep = deep || 1;
     deep_current = deep_current || 0;
@@ -203,20 +213,21 @@ function listFiles(dir, deep, filter, resultList, deep_current) {
     if (deep > -1 && deep_current > deep) {
         return resultList;
     }
-    const files = fs.readdirSync(dir.toString(), { withFileTypes: true });
+    const files = fs.readdirSync(dir.toString(), {withFileTypes: true});
     for (const file of files) {
         if (file.isDirectory()) {
             listFiles(path.join(dir.toString(), file.name), deep, filter, resultList, deep_current++);
-        }
-        else if (!filter || new RegExp(filter).test(file.name)) {
+        } else if (!filter || new RegExp(filter).test(file.name)) {
             resultList.push(path.join(dir.toString(), file.name));
         }
     }
     return resultList;
 }
+
 function getWorkingDirectory(workspace) {
     return workspace && fs.existsSync(workspace) ? workspace : process.cwd();
 }
+
 function getNodeByPath(node, nodeNames, index) {
     index = index || 0;
     if (nodeNames.length === index) {
@@ -229,6 +240,7 @@ function getNodeByPath(node, nodeNames, index) {
         .filter(node => node.childrenNamed(nodeNames[index + 1]))
         .flatMap(node => getNodeByPath(node, nodeNames, index + 1));
 }
+
 function matchFilter(node, filter) {
     var _a;
     if (!node || !filter) {
@@ -238,10 +250,12 @@ function matchFilter(node, filter) {
     let childNode = node.childrenNamed(kv[0]);
     return childNode && ((_a = childNode[0]) === null || _a === void 0 ? void 0 : _a.val) === kv[1];
 }
+
 function toLegacyJavaVersion(javaVersion) {
     if (javaVersion) {
         return javaVersion < 10 ? '1.' + javaVersion : javaVersion.toString();
     }
     return null;
 }
-module.exports = { run, listGradleFiles, listMavenFiles };
+
+module.exports = {run, listGradleFiles, listMavenFiles};
