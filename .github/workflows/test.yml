@@ -31,7 +31,6 @@ jobs:
           npm outdated 
           npm update --save
           npm audit fix --force
-          tsc
       - name: "Run Tests"
         run: |
           npm ci && npm test

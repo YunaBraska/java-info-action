@@ -69,6 +69,7 @@ It also creates some pre-generated commends dependent on wrapper, and OS. e.g. g
 ### \[DEV] Setup Environment
 
 * setup or clean environment `./clean_node.sh`
+* Run `tsc` to "compile" `index.ts` to `./lib/index.js`
 * NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
