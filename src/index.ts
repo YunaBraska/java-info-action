@@ -29,10 +29,10 @@ try {
     console.log(`result [${result.size}]`)
     console.log(JSON.stringify(result, null, 4))
 
-    for (const [key, value] of Object.entries(result)) {
+    result.forEach((value, key) => {
         core.setOutput(key, value);
         console.log(`key [${key}], key [${value}]`)
-    }
+    })
 } catch (e) {
     if (typeof e === "string") {
         core.setFailed(e.toUpperCase());
