@@ -61,10 +61,13 @@ function run(workDir, deep, jvFallback) {
     let gradleFiles = listGradleFiles(workDir, deep);
     if (gradleFiles.length > 0) {
         result = readGradle(gradleFiles, result);
+        console.log(`CC`);
     }
     else if (mavenFiles.length > 0) {
+        console.log(`DD`);
         result = readMaven(mavenFiles, result);
     }
+    console.log(`EE`);
     //POST PROCESSING
     result.set('java_version', result.get('java_version') ? result.get('java_version') : jvFallback);
     result.set('java_version_legacy', toLegacyJavaVersion(result.get('java_version')));
