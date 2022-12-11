@@ -5,7 +5,6 @@ on:
   push:
     paths-ignore:
       - '**.md'
-      - '**.yml'
 
 jobs:
   build:
@@ -38,7 +37,7 @@ jobs:
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
-        uses: YunaBraska/java-version@add_pipeline_check
+        uses: YunaBraska/java-version@main
         with:
           work-dir: '.'
           deep: '-1'
