@@ -4,7 +4,7 @@ Reads out the java version from gradle or maven.
 
 This is a parser, it won't run any gradle/maven command as these commands are really expensive in time and requirements.
 
-It also creates some pre-generated commends dependent on wrapper, and OS. e.g. gradle, gradlew, gradle.bat
+It also creates some pre-generated commends dependent on the build tool and OS. e.g. gradle, gradlew, gradle.bat
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
 
@@ -20,13 +20,18 @@ It also creates some pre-generated commends dependent on wrapper, and OS. e.g. g
 ## Usage
 
 ```yaml
+# RUNNER
 - name: "Get Java Version"
   id: "java_version_reader"
   uses: actions/java-version@main
+
+  #  CONFIGS
   with:
     deep: '-1'
     work-dir: '.'
     jv-fallback: 17
+    
+#    DO STUFF:
 - name: "Print Java Version"
   run: echo "java_version [${{ steps.java_version_reader.outputs.java_version }}]"
 - name: "Setup Java"
