@@ -37,7 +37,7 @@ jobs:
           npm ci && npm test
       - name: "Get Java Version"
         id: "read_java"
-        uses: YunaBraska/java-version@main
+        uses: YunaBraska/java-version@feat_typescript
         with:
           work-dir: '.'
           deep: '-1'
