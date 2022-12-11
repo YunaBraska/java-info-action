@@ -11,8 +11,9 @@ try {
     let workDir = core.getInput('work-dir');
     let jvFallback = core.getInput('jv-fallback');
     let deep = parseInt(core.getInput('deep'));
+    let workspace = process.env['GITHUB_WORKSPACE']?.toString();
     if (!workDir || workDir === ".") {
-        workDir = getWorkingDirectory()
+        workDir = getWorkingDirectory(workspace)
     }
     //TODO: auto update java version fallback
     console.log('jv_fallback [' + (!jvFallback ? 17 : jvFallback) + ']');
@@ -20,6 +21,10 @@ try {
     console.log(`work-dir [${workDir}]`);
 
     let result = run(workDir, deep, jvFallback);
+    result.set('GITHUB_WORKSPACE', workspace || null);
+    result.set('deep', deep);
+    result.set('work-dir', workDir);
+    result.set('jv-fallback', jvFallback);
 
     console.log(JSON.stringify(result, null, 4))
 
@@ -242,9 +247,8 @@ function listFiles(dir: PathOrFileDescriptor, deep: number, filter: string, resu
 }
 
 
-function getWorkingDirectory(): PathOrFileDescriptor {
-    let _a;
-    return (_a = process.env['GITHUB_WORKSPACE']) !== null && _a !== void 0 ? _a : process.cwd();
+function getWorkingDirectory(workspace: string | undefined | null): PathOrFileDescriptor {
+    return workspace && fs.existsSync(workspace) ? workspace : process.cwd();
 }
 
 function getNodeByPath(node: XmlElement, nodeNames: string[], index: number): XmlElement[] {

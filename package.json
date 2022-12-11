@@ -2,7 +2,7 @@
   "name": "java-version-action",
   "version": "1.0.0",
   "description": "Reads out the java version from gradle or maven",
-  "main": "./lib/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
     "test": "jest --coverage",
