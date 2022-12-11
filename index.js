@@ -38,6 +38,7 @@ catch (e) {
 }
 function run(workDir, deep, jvFallback) {
     //DEFAULTS
+    console.log(`AA`);
     let result = new Map([
         ['cmd', null],
         ['cmd_test', null],
@@ -54,6 +55,7 @@ function run(workDir, deep, jvFallback) {
         ['is_gradle', false],
         ['is_maven', false]
     ]);
+    console.log(`BB`);
     //PROCESSING
     let mavenFiles = listMavenFiles(workDir, deep);
     let gradleFiles = listGradleFiles(workDir, deep);
