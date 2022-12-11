@@ -10,5 +10,7 @@ npm outdated
 npm update --save
 npm audit fix --force
 echo "########## TEST                        ##########"
+tsc
+echo "########## BUILD                       ##########"
 npm test
 echo "########## DONE                        ##########"

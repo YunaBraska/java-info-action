@@ -2,8 +2,9 @@
   "name": "java-version-action",
   "version": "1.0.0",
   "description": "Reads out the java version from gradle or maven",
-  "main": "src/index.ts",
+  "main": "./lib/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "jest --coverage",
     "pre-checkin": "npm run format && npm run build && npm test"
   },
@@ -24,7 +25,6 @@
   "homepage": "https://github.com/YunaBraska/java-version#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "@actions/io": "^1.1.2",
     "xmldoc": "^1.2.0"
   },
   "devDependencies": {
