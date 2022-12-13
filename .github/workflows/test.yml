@@ -28,7 +28,7 @@ jobs:
           cache: npm
       - name: "update dependencies"
         run: |
-          npm outdated 
+          npm outdated || true 
           npm update --save
           npm audit fix --force
       - name: "Run Tests"
