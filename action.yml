@@ -13,6 +13,10 @@ inputs:
     description: 'java version fallback if no java version was found'
     required: false
     default: '17'
+  pv-fallback:
+    description: 'project version fallback if no project version was found'
+    required: false
+    default: 'null'
 outputs:
   java_version:
     description: 'java version - parsed from build files'

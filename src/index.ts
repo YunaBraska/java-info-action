@@ -1,6 +1,6 @@
 //https://github.com/actions/toolkit/tree/main/packages/
 import {PathOrFileDescriptor} from "fs";
-import {XmlElement} from "xmldoc";
+import {XmlDocument, XmlElement} from "xmldoc";
 
 const core = require('@actions/core');
 const fs = require('fs');
@@ -11,15 +11,17 @@ try {
     //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
     let jvFallback = core.getInput('jv-fallback') || 17;
+    let pvFallback = core.getInput('pv-fallback') || 17;
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace)
     }
-    let result = run(workDir, deep, jvFallback);
+    let result = run(workDir, deep, jvFallback, pvFallback);
     result.set('deep', deep);
     result.set('work-dir', workDir);
     result.set('jv-fallback', jvFallback);
+    result.set('pv-fallback', pvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
     console.log(JSON.stringify(Object.fromEntries(result), null, 4))
@@ -35,23 +37,24 @@ try {
     }
 }
 
-function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number): Map<string, string | number | boolean | null> {
+function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number): Map<string, string | number | boolean | null> {
     //DEFAULTS
     let result = new Map<string, string | number | boolean | null>([
         ['cmd', null],
         ['cmd_test', null],
         ['cmd_build', null],
+        ['is_maven', false],
+        ['is_gradle', false],
+        ['has_wrapper', false],
+        ['java_version', null],
         ['cmd_test_build', null],
+        ['builder_version', null],
+        ['project_version', null],
         ['cmd_update_deps', null],
         ['cmd_update_plugs', null],
         ['cmd_update_props', null],
         ['cmd_update_parent', null],
-        ['cmd_update_wrapper', null],
-        ['java_version', null],
-        ['has_wrapper', false],
-        ['builder_version', null],
-        ['is_gradle', false],
-        ['is_maven', false]
+        ['cmd_update_wrapper', null]
     ]);
     //PROCESSING
     let mavenFiles = listMavenFiles(workDir, deep);
@@ -63,7 +66,8 @@ function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number): M
     }
 
     //POST PROCESSING
-    result.set('java_version', result.get('java_version') ? (result.get('java_version') as number) : jvFallback);
+    result.set('project_version', result.get('project_version') || pvFallback || null);
+    result.set('java_version', (result.get('java_version') as number) || jvFallback || null);
 
     result.set('java_version_legacy', toLegacyJavaVersion(result.get('java_version')));
     result.set('is_gradle', gradleFiles.length > 0);
@@ -78,7 +82,15 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, strin
                 let dir = path.dirname(file.toString());
                 let wrapperMapFile = path.join(dir, '.mvn', 'wrapper', 'maven-wrapper.properties');
 
-                let javaVersion = readJavaVersionMaven(file);
+                let xmlDocument = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
+                //PROJECT VERSION
+                let projectVersion = readProjectVersionMaven(xmlDocument);
+                if (projectVersion) {
+                    result.set('project_version', projectVersion);
+                }
+
+                //JAVA VERSION
+                let javaVersion = readJavaVersionMaven(xmlDocument);
                 if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
                     result.set('java_version', javaVersion);
                 }
@@ -108,14 +120,19 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, strin
     return result;
 }
 
-function readJavaVersionMaven(file: PathOrFileDescriptor): number | null | undefined {
-    let document = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
+function readProjectVersionMaven(xmlDocument: XmlDocument): string | null | undefined {
+    return getNodeByPath(xmlDocument, ['version'], 0)
+        ?.filter(node => node.type === 'element')
+        ?.map(node => (node as XmlElement).val?.trim())[0];
+}
+
+function readJavaVersionMaven(xmlDocument: XmlDocument): number | null | undefined {
     let propertyMap = new Map(
-        getNodeByPath(document, ['properties'], 0)[0]
+        getNodeByPath(xmlDocument, ['properties'], 0)[0]
             ?.children.filter(node => node.type === 'element')
             ?.map(node => [(node as XmlElement).name, (node as XmlElement).val])
     );
-    let javaVersions = getNodeByPath(document, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'], 0)[0]
+    let javaVersions = getNodeByPath(xmlDocument, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'], 0)[0]
         ?.children.filter(node => node.type === 'element')
         ?.map(node => (node as XmlElement).val?.trim());
 
@@ -141,7 +158,16 @@ function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, str
                 let dir = path.dirname(file.toString());
                 let wrapperMapFile = path.join(dir, 'gradle', 'wrapper', 'gradle-wrapper.properties');
 
-                let javaVersion = readJavaVersionGradle(file);
+                let propertyMap = readPropertiesGradle(file);
+
+                //PROJECT_VERSION
+                let projectVersion = getMapValue(propertyMap, 'project.version', '\\d+');
+                if (projectVersion) {
+                    result.set('project_version', projectVersion);
+                }
+
+                //JAVA_VERSION
+                let javaVersion = readJavaVersionGradle(propertyMap);
                 if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
                     result.set('java_version', javaVersion);
                 }
@@ -189,10 +215,9 @@ function javaVersionOf(string: string | undefined | null): number | null {
     return null;
 }
 
-function readJavaVersionGradle(file: PathOrFileDescriptor): number | null {
-    let propertyMap = readPropertiesGradle(file);
-    let value = propertyMap.get('sourceCompatibility') || propertyMap.get('targetCompatibility')
-    return value ? javaVersionOf(propertyMap.get(value) || value) : null;
+function readJavaVersionGradle(propertyMap: Map<string, string>): number | null {
+    let value = getMapValue(propertyMap, 'sourceCompatibility', '\\d+') || getMapValue(propertyMap, 'targetCompatibility', '\\d+')
+    return value ? javaVersionOf(value) : null;
 }
 
 function readPropertiesGradle(file: PathOrFileDescriptor): Map<string, string> {
@@ -202,7 +227,10 @@ function readPropertiesGradle(file: PathOrFileDescriptor): Map<string, string> {
         if (eq > 0) {
             let key = line.substring(0, eq).trim()
             let spaceIndex = key.lastIndexOf(' ');
-            result.set(spaceIndex > 0 ? key.substring(spaceIndex + 1).trim() : key, line.substring(eq + 1).trim().replace(/['"]+/g, ''));
+            key = spaceIndex > 0 ? key.substring(spaceIndex + 1).trim() : key;
+            let value = line.substring(eq + 1).trim().replace(/['"]+/g, '');
+            let counter = getKeyOccurrence(result, key)
+            result.set(counter > 0 ? key + '#' + counter : key, value);
         } else if (!result.get('sourceCompatibility') && !result.get('targetCompatibility') && line.includes('languageVersion.set')) {
             result.set('targetCompatibility', line.trim()
                 .replace('JavaLanguageVersion', '')
@@ -273,6 +301,36 @@ function matchFilter(node: XmlElement, filter: string): boolean {
 function toLegacyJavaVersion(javaVersion: string | number | boolean | null | undefined): string | null {
     if (javaVersion) {
         return (javaVersion as number) < 10 ? '1.' + javaVersion : javaVersion.toString();
+    }
+    return null;
+}
+
+
+function getKeyOccurrence(map: Map<string, string>, key: string): number {
+    if (map.get(key)) {
+        let count = 0;
+        map.forEach((v, k) => {
+            k = k.includes('#') ? k.substring(0, k.indexOf('#')) : k;
+            if (key === k) {
+                count++
+            }
+        });
+        return count;
+    }
+    return 0;
+}
+
+
+function getMapValue(map: Map<string, string>, key: string, regex: string | undefined | null): string | null {
+    if (map.get(key)) {
+        for (let [mapKey, mapValue] of map) {
+            if (mapValue !== key && (mapKey === key || mapKey.startsWith(key + '#'))) {
+                mapValue = map.get(mapValue) || mapValue
+                if (!regex || (mapValue && new RegExp(regex).exec(mapValue))) {
+                    return mapValue;
+                }
+            }
+        }
     }
     return null;
 }

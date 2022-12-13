@@ -60,7 +60,9 @@ test('[GRADLE] Read each file should have expected result', () => {
 
         let hasWrapper = dir.includes('wrapper');
         let expectedVersion = javaVersionOfPath(dir);
+        let expectedProjectVersion = projectVersionOfPath(dir);
         expect(result.get('java_version')).toEqual(expectedVersion)
+        expect(result.get('project_version')).toEqual(expectedProjectVersion)
         expect(result.get('java_version_legacy')).toEqual(expectedVersion === 8 ? '1.8' : expectedVersion?.toString())
         expect(result.get('has_wrapper')).toEqual(hasWrapper)
         expect(result.get('is_gradle')).toEqual(true)
@@ -122,7 +124,9 @@ test('[MAVEN] Read each file should have expected result', () => {
 
         let hasWrapper = dir.includes('wrapper');
         let expectedVersion = javaVersionOfPath(dir);
+        let expectedProjectVersion = projectVersionOfPath(dir) || '0.0.1';
         expect(result.get('java_version')).toEqual(expectedVersion)
+        expect(result.get('project_version')).toEqual(expectedProjectVersion)
         expect(result.get('java_version_legacy')).toEqual(expectedVersion === 8 ? '1.8' : expectedVersion?.toString())
         expect(result.get('has_wrapper')).toEqual(hasWrapper)
         expect(result.get('is_maven')).toEqual(true)
@@ -143,6 +147,11 @@ function javaVersionOfPath(pathString: string): number | null | undefined {
     jv = jv.substring(jv.lastIndexOf('/') + 1);
     jv = jv.substring(jv.lastIndexOf('_') + 1);
     return parseInt(jv.trim())
+}
+
+function projectVersionOfPath(pathString: string): string | null {
+    let regexResult = new RegExp('(\\d[\\.]){2,}\\d').exec(pathString);
+    return regexResult !== null? regexResult[0] : null
 }
 
 
