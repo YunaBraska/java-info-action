@@ -11,7 +11,7 @@ try {
     //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
     let jvFallback = core.getInput('jv-fallback') || 17;
-    let pvFallback = core.getInput('pv-fallback') || 17;
+    let pvFallback = core.getInput('pv-fallback') || null;
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
