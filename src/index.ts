@@ -116,6 +116,8 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, strin
     result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false');
+    result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins');
+    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve');
     result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q -N io.takari:maven:wrapper');
     return result;
 }
@@ -192,6 +194,8 @@ function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, str
     result.set('cmd_update_plugs', result.get('cmd') + ' check');
     result.set('cmd_update_props', result.get('cmd') + ' check');
     result.set('cmd_update_parent', result.get('cmd') + ' check');
+    result.set('cmd_resolve_plugs', result.get('cmd') + ' check');
+    result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
     result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version ' + gradleLTS);
     return result;
 }

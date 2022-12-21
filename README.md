@@ -56,24 +56,26 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 ### Outputs
 
-| Name                | default      | description                                                                                   |
-|---------------------|--------------|-----------------------------------------------------------------------------------------------|
-| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                          |
-| java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                     |
-| java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                             |
-| has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                  |
-| builder_version     | null         | version of the wrapper                                                                        |
-| is_gradle           | false        | true if a gradle build file was found                                                         |
-| is_maven            | false        | true if a maven build file was found                                                          |
-| cmd                 | -            | command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat                                  |
-| cmd_test            | -            | command e.g. gradle clean test, clean test                                                    |
-| cmd_build           | -            | command e.g. gradle clean build -x test / mvn clean package -DskipTests                       |
-| cmd_test_build      | -            | command e.g. gradle clean build / mvn clean package                                           |
-| cmd_update_deps     | -            | command e.g. gradle check / mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false |
-| cmd_update_plugs    | -            | command e.g. gradle check / mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false |
-| cmd_update_props    | -            | command e.g. gradle check / mvn versions:update-properties -B -q -DgenerateBackupPoms=false   |
-| cmd_update_parent   | -            | command e.g. gradle check / mvn versions:update-parent -B -q -DgenerateBackupPoms=false       |
-| cmd_update_wrapper  | -            | command e.g. gradle wrapper --gradle-version 7.5.1 / mvn -B -q -N io.takari:maven:wrapper     |
+| Name                | default      | description                                                                                                                 |
+|---------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------|
+| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
+| java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                                                   |
+| java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                                                           |
+| has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                                                |
+| builder_version     | null         | version of the wrapper                                                                                                      |
+| is_gradle           | false        | true if a gradle build file was found                                                                                       |
+| is_maven            | false        | true if a maven build file was found                                                                                        |
+| cmd                 | -            | command e.g. <br>*  gradle / gradlew / gradle.bat <br>*  mvn / mvnw / mvn.bat                                               |
+| cmd_test            | -            | command e.g. <br>*  gradle clean test <br>*  mvn clean test                                                                 |
+| cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                                        |
+| cmd_test_build      | -            | command e.g. <br>*  gradle clean build  <br>*  mvn clean package                                                            |
+| cmd_update_deps     | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                  |
+| cmd_update_plugs    | -            | command e.g.  <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                 |
+| cmd_update_props    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-properties -B -q -DgenerateBackupPoms=false                    |
+| cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
+| cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
+| cmd_resolve_plugs   | -            | command e.g. <br> *  gradle --refresh-dependencies check -x test <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true |
+| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version <Latest_LTS>  <br>*  mvn -B -q -N io.takari:maven:wrapper                   |
 
 ### \[DEV] Setup Environment
 
