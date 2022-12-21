@@ -23,18 +23,19 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 # RUNNER
 - name: "Get Java Version"
   id: "java_version_reader"
-  uses: actions/java-version@main
+  uses: YunaBraska/java-version@main
 
-  #  CONFIGS
+  # CONFIGS
   with:
     deep: '-1'
     work-dir: '.'
     jv-fallback: 17
     pv-fallback: '0.0.1'
-    
-#    DO STUFF:
+
+  # PRINT
 - name: "Print Java Version"
   run: echo "java_version [${{ steps.java_version_reader.outputs.java_version }}]"
+  # SETUP JAVA
 - name: "Setup Java"
   uses: actions/setup-java@main
   with:
@@ -46,18 +47,18 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 ### Inputs
 
-| parameter   | default | description                                              |
-|-------------|---------|----------------------------------------------------------|
-| work-dir    | '.'     | folder scan ('.' == current)                             |
-| deep        | -1      | folder scan deep (-1 == endless)                         |
-| jv-fallback | 17      | java version fallback if no java version was found       |
-| pv-fallback | null    | project version fallback if no project version was found |
+| parameter   | default      | description                                                    |
+|-------------|--------------|----------------------------------------------------------------|
+| work-dir    | '.'          | folder scan ('.' == current)                                   |
+| deep        | -1           | folder scan deep (-1 == endless)                               |
+| jv-fallback | <Latest_LTS> | fallback for "java_version" if no java version was found       |
+| pv-fallback | null         | fallback for "project_version" if no project version was found |
 
 ### Outputs
 
 | Name                | default      | description                                                                                   |
 |---------------------|--------------|-----------------------------------------------------------------------------------------------|
-| project_version     | <Latest_LTS> | project version - parsed from build files e.g. 1.2.3                                          |
+| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                          |
 | java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                     |
 | java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                             |
 | has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                  |
