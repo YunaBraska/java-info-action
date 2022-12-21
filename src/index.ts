@@ -116,8 +116,8 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, strin
     result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins');
-    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve');
+    result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins -B -q');
+    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve -B -q');
     result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q -N io.takari:maven:wrapper');
     return result;
 }
