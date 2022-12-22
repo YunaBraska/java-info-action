@@ -13,7 +13,7 @@ npm outdated || true
 npm update --save
 npm audit fix --force
 echo "########## BUILD                       ##########"
-tsc
+npm run build
 echo "########## TEST                        ##########"
-npm test
+npm run test:coverage
 echo "########## DONE                        ##########"

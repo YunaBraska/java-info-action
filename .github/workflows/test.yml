@@ -33,7 +33,12 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          npm ci && npm test
+          npm ci && npm run test:coverage
+      - name: Generating coverage badges
+        uses: jpb06/jest-badges-action@latest
+      - name: "Write coverage badge"
+        run: |
+          cp coverage/badge-lines.svg .
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main

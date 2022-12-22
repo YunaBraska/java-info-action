@@ -61,7 +61,7 @@ jobs:
           npm audit fix --force
       - name: "Run Tests"
         run: |
-          npm ci && npm test
+          npm ci && npm run test:coverage
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main

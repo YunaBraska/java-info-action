@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --coverage",
-    "pre-checkin": "npm run format && npm run build && npm test"
+    "test:coverage": "npm test -- --coverage",
+    "pre-checkin": "npm run build && npm test:coverage"
   },
   "repository": {
     "type": "git",
