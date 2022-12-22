@@ -6,8 +6,6 @@
 .settings
 .springBeans
 .sts4-cache
-./badges
-badges
 /bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
