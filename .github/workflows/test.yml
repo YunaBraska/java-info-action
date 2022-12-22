@@ -40,7 +40,7 @@ jobs:
           branches: ${{ github.ref_name || github.head_ref }}
       - name: "Write coverage badge"
         run: |
-          cp coverage/badge-lines.svg .
+          cp badges/coverage-lines.svg .
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main
