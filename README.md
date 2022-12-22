@@ -45,7 +45,6 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
   # RUN TESTS
 - name: "Run tests"
-  uses: actions/setup-java@main
   run: sh ${{ steps.java_info.outputs.cmd_test }}
 
 ```
