@@ -1,4 +1,4 @@
-name: 'Java Version Reader'
+name: 'Java Info Action'
 description: 'Detects the Java Version of Gradle and Maven'
 inputs:
   deep:
