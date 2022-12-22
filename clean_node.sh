@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
 echo "########## SETUP NODE (via nvm)        ##########"
 nvm install 16 || true

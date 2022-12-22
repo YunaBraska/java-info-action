@@ -21,11 +21,11 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 ```yaml
 # RUNNER
-- name: "Get Java Version"
-  id: "java_version_reader"
+- name: "Read Java Info"
+  id: "java_info"
   uses: YunaBraska/java-info-action@main
 
-  # CONFIGS
+  # CONFIGS (Optional)
   with:
     deep: '-1'
     work-dir: '.'
@@ -34,13 +34,20 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
   # PRINT
 - name: "Print Java Version"
-  run: echo "java_version [${{ steps.java_version_reader.outputs.java_version }}]"
+  run: echo "java_version [${{ steps.java_info.outputs.java_version }}]"
+
   # SETUP JAVA
 - name: "Setup Java"
   uses: actions/setup-java@main
   with:
-    java-version: ${{ steps.java_version_reader.outputs.java_version }}
+    java-version: ${{ steps.java_info.outputs.java_version }}
     distribution: 'adopt'
+
+  # RUN TESTS
+- name: "Run tests"
+  uses: actions/setup-java@main
+  run: sh ${{ steps.java_info.outputs.cmd_test }}
+
 ```
 
 * Hint for multi-modules: The highest java version will win the race.
