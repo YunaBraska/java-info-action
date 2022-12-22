@@ -1,4 +1,4 @@
-# java-version
+# java-info-action
 
 Reads out the java version from gradle or maven.
 
@@ -21,11 +21,11 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 ```yaml
 # RUNNER
-- name: "Get Java Version"
-  id: "java_version_reader"
-  uses: YunaBraska/java-version@main
+- name: "Read Java Info"
+  id: "java_info"
+  uses: YunaBraska/java-info-action@main
 
-  # CONFIGS
+  # CONFIGS (Optional)
   with:
     deep: '-1'
     work-dir: '.'
@@ -34,13 +34,20 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
   # PRINT
 - name: "Print Java Version"
-  run: echo "java_version [${{ steps.java_version_reader.outputs.java_version }}]"
+  run: echo "java_version [${{ steps.java_info.outputs.java_version }}]"
+
   # SETUP JAVA
 - name: "Setup Java"
   uses: actions/setup-java@main
   with:
-    java-version: ${{ steps.java_version_reader.outputs.java_version }}
+    java-version: ${{ steps.java_info.outputs.java_version }}
     distribution: 'adopt'
+
+  # RUN TESTS
+- name: "Run tests"
+  uses: actions/setup-java@main
+  run: sh ${{ steps.java_info.outputs.cmd_test }}
+
 ```
 
 * Hint for multi-modules: The highest java version will win the race.
@@ -84,32 +91,32 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 * NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
-[build_shield]: https://github.com/YunaBraska/java-version/workflows/RELEASE/badge.svg
+[build_shield]: https://github.com/YunaBraska/java-info-action/workflows/RELEASE/badge.svg
 
-[build_link]: https://github.com/YunaBraska/java-version/actions?query=workflow%3AMVN_RELEASE
+[build_link]: https://github.com/YunaBraska/java-info-action/actions?query=workflow%3AMVN_RELEASE
 
-[issues_shield]: https://img.shields.io/github/issues/YunaBraska/java-version?style=flat-square
+[issues_shield]: https://img.shields.io/github/issues/YunaBraska/java-info-action?style=flat-square
 
-[issues_link]: https://github.com/YunaBraska/java-version/commits/main
+[issues_link]: https://github.com/YunaBraska/java-info-action/commits/main
 
-[commit_shield]: https://img.shields.io/github/last-commit/YunaBraska/java-version?style=flat-square
+[commit_shield]: https://img.shields.io/github/last-commit/YunaBraska/java-info-action?style=flat-square
 
-[commit_link]: https://github.com/YunaBraska/java-version/issues
+[commit_link]: https://github.com/YunaBraska/java-info-action/issues
 
-[license_shield]: https://img.shields.io/github/license/YunaBraska/java-version?style=flat-square
+[license_shield]: https://img.shields.io/github/license/YunaBraska/java-info-action?style=flat-square
 
-[license_link]: https://github.com/YunaBraska/java-version/blob/main/LICENSE
+[license_link]: https://github.com/YunaBraska/java-info-action/blob/main/LICENSE
 
-[tag_shield]: https://img.shields.io/github/v/tag/YunaBraska/java-version?style=flat-square
+[tag_shield]: https://img.shields.io/github/v/tag/YunaBraska/java-info-action?style=flat-square
 
-[tag_link]: https://github.com/YunaBraska/java-version/releases
+[tag_link]: https://github.com/YunaBraska/java-info-action/releases
 
-[size_shield]: https://img.shields.io/github/repo-size/YunaBraska/java-version?style=flat-square
+[size_shield]: https://img.shields.io/github/repo-size/YunaBraska/java-info-action?style=flat-square
 
 [label_shield]: https://img.shields.io/badge/Yuna-QueenInside-blueviolet?style=flat-square
 
-[gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/java-version?style=flat-square
+[gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/java-info-action?style=flat-square
 
-[gitter_link]: https://gitter.im/java-version/Lobby
+[gitter_link]: https://gitter.im/java-info-action/Lobby
 
 [node_version]: https://img.shields.io/badge/node-16-blueviolet?style=flat-square

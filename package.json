@@ -1,5 +1,5 @@
 {
-  "name": "java-version-action",
+  "name": "java-info-action",
   "version": "1.0.0",
   "description": "Reads out the java version from gradle or maven",
   "main": "./lib/index.js",
