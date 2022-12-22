@@ -115,7 +115,7 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 [size_shield]: https://img.shields.io/github/repo-size/YunaBraska/java-info-action?style=flat-square
 
 [label_shield]: https://img.shields.io/badge/Yuna-QueenInside-blueviolet?style=flat-square
-[label_coverage]: coverage-lines.svg
+[label_coverage]: badges/coverage-lines.svg
 
 [gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/java-info-action?style=flat-square
 
