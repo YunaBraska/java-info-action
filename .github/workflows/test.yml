@@ -23,9 +23,9 @@ jobs:
           echo "--------------------- ENVS ---------------------"
           env
       - name: "Checkout"
-        uses: actions/checkout@main
+        uses: actions/checkout@latest
       - name: "Setup Node"
-        uses: actions/setup-node@main
+        uses: actions/setup-node@latest
         with:
           node-version: "16"
           cache: npm
@@ -38,7 +38,7 @@ jobs:
         run: |
           npm ci && npm run test:coverage
       - name: "Publish code quality"
-        uses: paambaati/codeclimate-action@main
+        uses: paambaati/codeclimate-action@latest
         if: steps.inputs.outputs.has_publish_to_code_climate == 'true'
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
@@ -46,7 +46,7 @@ jobs:
           coverageLocations: ${{github.workspace}}/coverage/cobertura-coverage.xml
       - name: "Get Java Version"
         id: "read_java"
-        uses: YunaBraska/java-info-action@main
+        uses: YunaBraska/java-info-action@latest
         with:
           work-dir: '.'
           deep: '-1'
