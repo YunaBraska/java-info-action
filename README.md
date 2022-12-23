@@ -9,6 +9,8 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
 
 [![Build][build_shield]][build_link]
+[![Maintainable][maintainable_shield]][maintainable_link]
+[![Coverage][coverage_shield]][coverage_link]
 [![Issues][issues_shield]][issues_link]
 [![Commit][commit_shield]][commit_link]
 [![License][license_shield]][license_link]
@@ -86,13 +88,22 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 ### \[DEV] Setup Environment
 
 * setup or clean environment `./clean_node.sh`
-* Run `tsc` to "compile" `index.ts` to `./lib/index.js`
+* Run `npm run test:coverage` to run all tests
+* Run `npm run build` to "compile" `index.ts` to `./lib/index.js`
 * NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
 [build_shield]: https://github.com/YunaBraska/java-info-action/workflows/RELEASE/badge.svg
 
 [build_link]: https://github.com/YunaBraska/java-info-action/actions?query=workflow%3AMVN_RELEASE
+
+[maintainable_shield]: https://img.shields.io/codeclimate/maintainability/YunaBraska/java-info-action?style=flat-square
+
+[maintainable_link]: https://codeclimate.com/github/YunaBraska/java-info-action/maintainability
+
+[coverage_shield]: https://img.shields.io/codeclimate/coverage/YunaBraska/java-info-action?style=flat-square
+
+[coverage_link]: https://codeclimate.com/github/YunaBraska/java-info-action/test_coverage
 
 [issues_shield]: https://img.shields.io/github/issues/YunaBraska/java-info-action?style=flat-square
 
