@@ -17,6 +17,9 @@ jobs:
         id: "inputs"
         run: |
           if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
+          has_publish_to_code_climate=$(if [[ "${{secrets.CC_TEST_REPORTER_ID}}" == "" ]]; then echo "false"; else echo "true"; fi)
+          echo "has_publish_to_code_climate [$has_publish_to_code_climate]"
+          echo "has_publish_to_code_climate=$has_publish_to_code_climate" >> $GITHUB_OUTPUT
           echo "--------------------- ENVS ---------------------"
           env
       - name: "Checkout"
@@ -34,13 +37,14 @@ jobs:
       - name: "Run Tests"
         run: |
           npm ci && npm run test:coverage
-      - name: Generating coverage badges
-        uses: jpb06/jest-badges-action@latest
+      - name: "Publish code quality"
+        uses: paambaati/codeclimate-action@main
+        if: steps.inputs.outputs.has_publish_to_code_climate == 'true'
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
         with:
-          branches: ${{ github.ref_name || github.head_ref }}
-      - name: "Write coverage badge"
-        run: |
-          cp badges/coverage-lines.svg .
+          coverageLocations: ${{github.workspace}}/coverage/cobertura-coverage.xml
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main
