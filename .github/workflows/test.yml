@@ -42,7 +42,6 @@ jobs:
         if: steps.inputs.outputs.has_publish_to_code_climate == 'true'
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
         with:
           coverageLocations: ${{github.workspace}}/coverage/cobertura-coverage.xml
       - name: "Get Java Version"
