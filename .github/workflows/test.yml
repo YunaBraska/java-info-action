@@ -37,13 +37,6 @@ jobs:
       - name: "Run Tests"
         run: |
           npm ci && npm run test:coverage
-      - name: "Publish code quality"
-        uses: paambaati/codeclimate-action@v3.2.0
-        if: steps.inputs.outputs.has_publish_to_code_climate == 'true'
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-        with:
-          coverageLocations: ${{github.workspace}}/coverage/*.lcov:lcov
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main

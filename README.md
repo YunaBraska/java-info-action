@@ -9,7 +9,8 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
 
 [![Build][build_shield]][build_link]
-![Label][label_coverage]
+[![Maintainable][maintainable_shield]][maintainable_link]
+[![Coverage][coverage_shield]][coverage_link]
 [![Issues][issues_shield]][issues_link]
 [![Commit][commit_shield]][commit_link]
 [![License][license_shield]][license_link]
@@ -96,6 +97,14 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 [build_link]: https://github.com/YunaBraska/java-info-action/actions?query=workflow%3AMVN_RELEASE
 
+[maintainable_shield]: https://img.shields.io/codeclimate/maintainability/YunaBraska/java-info-action?style=flat-square
+
+[maintainable_link]: https://codeclimate.com/github/YunaBraska/java-info-action/maintainability
+
+[coverage_shield]: https://img.shields.io/codeclimate/coverage/YunaBraska/java-info-action?style=flat-square
+
+[coverage_link]: https://codeclimate.com/github/YunaBraska/java-info-action/test_coverage
+
 [issues_shield]: https://img.shields.io/github/issues/YunaBraska/java-info-action?style=flat-square
 
 [issues_link]: https://github.com/YunaBraska/java-info-action/commits/main
@@ -115,6 +124,7 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 [size_shield]: https://img.shields.io/github/repo-size/YunaBraska/java-info-action?style=flat-square
 
 [label_shield]: https://img.shields.io/badge/Yuna-QueenInside-blueviolet?style=flat-square
+
 [label_coverage]: badges/coverage-lines.svg
 
 [gitter_shield]: https://img.shields.io/gitter/room/YunaBraska/java-info-action?style=flat-square
