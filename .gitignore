@@ -42,3 +42,6 @@ common/cdk.out
 .venv
 __pycache__
 *.bat
+
+/cc-reporter*
+/public-key.asc
