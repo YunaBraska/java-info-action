@@ -16,10 +16,8 @@ jobs:
       - name: "Validate Input"
         id: "inputs"
         run: |
+          echo "--------------------- VALIDATION ---------------"
           if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
-          has_publish_to_code_climate=$(if [[ "${{secrets.CC_TEST_REPORTER_ID}}" == "" ]]; then echo "false"; else echo "true"; fi)
-          echo "has_publish_to_code_climate [$has_publish_to_code_climate]"
-          echo "has_publish_to_code_climate=$has_publish_to_code_climate" >> $GITHUB_OUTPUT
           echo "--------------------- ENVS ---------------------"
           env
       - name: "Checkout"

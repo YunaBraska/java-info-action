@@ -78,7 +78,7 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 | cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                                        |
 | cmd_test_build      | -            | command e.g. <br>*  gradle clean build  <br>*  mvn clean package                                                            |
 | cmd_update_deps     | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                  |
-| cmd_update_plugs    | -            | command e.g.  <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                 |
+| cmd_update_plugs    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                  |
 | cmd_update_props    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-properties -B -q -DgenerateBackupPoms=false                    |
 | cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
 | cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
@@ -95,7 +95,7 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 [build_shield]: https://github.com/YunaBraska/java-info-action/workflows/RELEASE/badge.svg
 
-[build_link]: https://github.com/YunaBraska/java-info-action/actions?query=workflow%3AMVN_RELEASE
+[build_link]: https://github.com/YunaBraska/java-info-action/actions/workflows/publish.yml/badge.svg
 
 [maintainable_shield]: https://img.shields.io/codeclimate/maintainability/YunaBraska/java-info-action?style=flat-square
 

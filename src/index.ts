@@ -7,6 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const xmlReader = require('xmldoc');
 
+type ResultType = string | number | boolean | null;
+
 try {
     //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
@@ -24,7 +26,7 @@ try {
     result.set('pv-fallback', pvFallback);
     result.set('GITHUB_WORKSPACE', workspace || null);
 
-    console.log(JSON.stringify(Object.fromEntries(result), null, 4))
+    console.log(JSON.stringify(Object.fromEntries(sortMap(result)), null, 4))
 
     result.forEach((value, key) => {
         core.setOutput(key, value);
@@ -37,9 +39,9 @@ try {
     }
 }
 
-function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number): Map<string, string | number | boolean | null> {
+function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number): Map<string, ResultType> {
     //DEFAULTS
-    let result = new Map<string, string | number | boolean | null>([
+    let result = new Map<string, ResultType>([
         ['cmd', null],
         ['cmd_test', null],
         ['cmd_build', null],
@@ -75,7 +77,7 @@ function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pv
     return result;
 }
 
-function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, string | number | boolean | null>): Map<string, string | number | boolean | null> {
+function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
     result.set('is_maven', mavenFiles.length > 0);
     mavenFiles.forEach(file => {
             try {
@@ -152,8 +154,8 @@ function readJavaVersionMaven(xmlDocument: XmlDocument): number | null | undefin
     return result;
 }
 
-function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, string | number | boolean | null>): Map<string, string | number | boolean | null> {
-    let gradleLTS = '7.5.1';
+function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
+    let gradleLTS = '7.6';
     result.set('is_gradle', gradleFiles.length > 0);
     gradleFiles.forEach(file => {
             try {
@@ -302,7 +304,7 @@ function matchFilter(node: XmlElement, filter: string): boolean {
     return childNode && childNode[0]?.val === kv[1];
 }
 
-function toLegacyJavaVersion(javaVersion: string | number | boolean | null | undefined): string | null {
+function toLegacyJavaVersion(javaVersion: ResultType | undefined): string | null {
     if (javaVersion) {
         return (javaVersion as number) < 10 ? '1.' + javaVersion : javaVersion.toString();
     }
@@ -324,7 +326,6 @@ function getKeyOccurrence(map: Map<string, string>, key: string): number {
     return 0;
 }
 
-
 function getMapValue(map: Map<string, string>, key: string, regex: string | undefined | null): string | null {
     if (map.get(key)) {
         for (let [mapKey, mapValue] of map) {
@@ -337,6 +338,11 @@ function getMapValue(map: Map<string, string>, key: string, regex: string | unde
         }
     }
     return null;
+}
+
+function sortMap(input: Map<string, any>): Map<string, any> {
+    const sortedEntries = Array.from(input.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    return new Map(sortedEntries);
 }
 
 module.exports = {run, listGradleFiles, listMavenFiles};
