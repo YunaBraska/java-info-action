@@ -112,7 +112,7 @@ jobs:
           rm -rf target/semver.py
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
       - name: "Push changes"
-        if: steps.git.outputs.semver != ''
+        if: steps.git_info.outputs.has_changes == 'true' || steps.git_info.outputs.has_local_changes == 'true'
         uses: stefanzweifel/git-auto-commit-action@master
         with:
           commit_message: "chore: 🏷️ new version [${{ steps.semver.outputs.new_version }}]"
