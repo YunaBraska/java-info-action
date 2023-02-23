@@ -111,9 +111,9 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, Resul
     )
 
     result.set('cmd', result.get('has_wrapper') ? (process.platform === "win32" ? 'mvn.cmd' : './mvnw') : 'mvn');
-    result.set('cmd_test', result.get('cmd') + ' clean test');
-    result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests');
-    result.set('cmd_test_build', result.get('cmd') + ' clean package');
+    result.set('cmd_test', result.get('cmd') + ' clean test verify -B');
+    result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B');
+    result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B');
     result.set('cmd_update_deps', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');
