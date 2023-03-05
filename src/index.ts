@@ -85,6 +85,8 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, Resul
                 let wrapperMapFile = path.join(dir, '.mvn', 'wrapper', 'maven-wrapper.properties');
 
                 let xmlDocument = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
+                let propertyMap = readPropertiesMaven(xmlDocument);
+
                 //PROJECT VERSION
                 let projectVersion = readProjectVersionMaven(xmlDocument);
                 if (projectVersion) {
@@ -95,6 +97,15 @@ function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, Resul
                 let javaVersion = readJavaVersionMaven(xmlDocument);
                 if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
                     result.set('java_version', javaVersion);
+                }
+
+                //ARTIFACT_NAME 1
+                let finalName = getNodeValueMaven(xmlDocument, propertyMap, ["build", "finalName"])
+                if (finalName) {
+                    let finalNameNoJar = finalName.endsWith('.jar') ? finalName.substring(0, finalName.length - '.jar'.length) : finalName;
+                    result.set('base_name', finalNameNoJar);
+                    result.set('artifact_name', finalNameNoJar);
+                    result.set('artifact_name_jar', finalNameNoJar + '.jar');
                 }
 
                 if (fs.existsSync(path.join(dir, 'mvnw.cmd')) || fs.existsSync(path.join(dir, 'mvnw')) || fs.existsSync(wrapperMapFile)) {
@@ -154,6 +165,37 @@ function readJavaVersionMaven(xmlDocument: XmlDocument): number | null | undefin
     return result;
 }
 
+function readPropertiesMaven(xmlDocument: XmlDocument): Map<string, string> {
+    let result = new Map(
+        getNodeByPath(xmlDocument, ['properties'], 0)[0]
+            ?.children.filter(node => node.type === 'element')
+            ?.map(node => [(node as XmlElement).name, (node as XmlElement).val])
+    );
+
+    Array.from(result.keys()).forEach(key => {
+        let resolvedValue = result.get(key)?.replace(/\${(.*?)}/g, (match, placeholder) => {
+            return result.get(placeholder) || match;
+        });
+        if (resolvedValue) {
+            result.set(key, resolvedValue);
+        }
+    });
+    return result;
+
+}
+
+function getNodeValueMaven(xmlDocument: XmlDocument, propertyMap: Map<string, string>, nodeNames: string[]): string | null {
+    let nodeValue = getNodeByPath(xmlDocument, nodeNames, 0)
+        ?.filter(node => node.type === 'element')
+        ?.map(node => (node as XmlElement).val?.trim())
+        ?.filter(nv => nv.length != 0)
+        ?.[0];
+
+    return nodeValue? nodeValue.replace(/\${(.*?)}/g, (match, placeholder) => {
+        return propertyMap.get(placeholder) || match;
+    }) : null;
+}
+
 function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
     let gradleLTS = '7.6';
     result.set('is_gradle', gradleFiles.length > 0);
@@ -174,6 +216,24 @@ function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, Res
                 let javaVersion = readJavaVersionGradle(propertyMap);
                 if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
                     result.set('java_version', javaVersion);
+                }
+
+                //ARTIFACT_NAME 1
+                let baseName = getMapValue(propertyMap, "baseName", null);
+                if (baseName) {
+                    let baseNameNoJar = baseName.endsWith('.jar') ? baseName.substring(0, baseName.length - '.jar'.length) : baseName;
+                    result.set('base_name', baseNameNoJar);
+                    result.set('artifact_name', baseNameNoJar);
+                    result.set('artifact_name_jar', baseNameNoJar + '.jar');
+                }
+
+                //ARTIFACT_NAME 2
+                let archiveFileName = getMapValue(propertyMap, "archiveFileName", null);
+                if (archiveFileName) {
+                    let archiveFileNameNoJar = archiveFileName.endsWith('.jar') ? archiveFileName.substring(0, archiveFileName.length - '.jar'.length) : archiveFileName;
+                    result.set('artifact_name', archiveFileNameNoJar);
+                    result.set('archive_file_name', archiveFileNameNoJar);
+                    result.set('artifact_name_jar', archiveFileNameNoJar + '.jar');
                 }
 
                 if (fs.existsSync(path.join(dir, 'gradle.bat')) || fs.existsSync(path.join(dir, 'gradlew')) || fs.existsSync(wrapperMapFile)) {
@@ -245,6 +305,15 @@ function readPropertiesGradle(file: PathOrFileDescriptor): Map<string, string> {
                 .replace(/[()]+/g, '')
                 .replace(/['"]+/g, '')
             );
+        } else {
+            //GRADLE KTS
+            let eq = line.indexOf('.set(');
+            if (eq > 0) {
+                let key = line.substring(0, eq).trim()
+                let value = line.substring(eq + 4).trim().replace(/['"]+/g, '').replace(/[()]+/g, '').replace(/['"]+/g, '');
+                let counter = getKeyOccurrence(result, key)
+                result.set(counter > 0 ? key + '#' + counter : key, value);
+            }
         }
     })
     return result;

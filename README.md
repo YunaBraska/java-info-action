@@ -73,6 +73,8 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 | builder_version     | null         | version of the wrapper                                                                                                      |
 | is_gradle           | false        | true if a gradle build file was found                                                                                       |
 | is_maven            | false        | true if a maven build file was found                                                                                        |
+| artifact_name       | -            | artifact name if defined e.g. "archiveFileName, baseName, finalName"                                                        |
+| artifact_name_jar   | -            | artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"                                     |
 | cmd                 | -            | command e.g. <br>*  gradle / gradlew / gradle.bat <br>*  mvn / mvnw / mvn.bat                                               |
 | cmd_test            | -            | command e.g. <br>*  gradle clean test <br>*  mvn clean test                                                                 |
 | cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                                        |

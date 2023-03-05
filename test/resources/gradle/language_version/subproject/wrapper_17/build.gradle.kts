@@ -27,3 +27,8 @@ application {
 }
 
 version = "1.2.1"
+
+tasks.withType<BootJar> {
+    baseName.set("my-spring-boot-app")
+    archiveFileName.set("my-spring-boot-app.jar")
+}

@@ -135,6 +135,27 @@ test('[MAVEN] Read each file should have expected result', () => {
     });
 });
 
+test('[MAVEN] artifact_name && artifact_name_jar', () => {
+    let result_src = main.run(path.join(__dirname, 'resources/maven/project_version/project_version_7.8.9_11'), -1, -1);
+    expect(result_src.get('base_name')).toEqual("my-spring-boot-app")
+    expect(result_src.get('artifact_name')).toEqual("my-spring-boot-app")
+    expect(result_src.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
+});
+
+test('[GRADLE] artifact_name && artifact_name_jar', () => {
+    let result_src = main.run(path.join(__dirname, 'resources/gradle/source/subproject'), -1, -1);
+    expect(result_src.get('base_name')).toEqual("my-spring-boot-app")
+    expect(result_src.get('artifact_name')).toEqual("my-spring-boot-app")
+    expect(result_src.get('archive_file_name')).toEqual("my-spring-boot-app")
+    expect(result_src.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
+
+    let result_lv = main.run(path.join(__dirname, 'resources/gradle/language_version/subproject'), -1, -1);
+    expect(result_lv.get('base_name')).toEqual("my-spring-boot-app")
+    expect(result_lv.get('artifact_name')).toEqual("my-spring-boot-app")
+    expect(result_lv.get('archive_file_name')).toEqual("my-spring-boot-app")
+    expect(result_lv.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
+});
+
 function createEmptyDir(dir: PathOrFileDescriptor): PathOrFileDescriptor {
     if (!fs.existsSync(dir.toString())) {
         fs.mkdirSync(dir.toString());

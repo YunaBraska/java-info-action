@@ -26,6 +26,10 @@ outputs:
     description: 'true if a gradle build was found'
   is_maven:
     description: 'true if a maven build was found'
+  artifact_name:
+    description: 'artifact name if defined e.g. "archiveFileName, baseName, finalName"'
+  artifact_name_jar:
+    description: 'artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"'
   cmd:
     description: 'build command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat'
   cmd_test:

@@ -24,6 +24,7 @@
         <project.reporting.outputEncoding>${project.encoding}</project.reporting.outputEncoding>
         <project.build.sourceEncoding>${project.encoding}</project.build.sourceEncoding>
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <my-spring-boot-app.finalName>my-spring-boot-app</my-spring-boot-app.finalName>
     </properties>
 
     <dependencies>
@@ -40,7 +41,7 @@
     </dependencies>
 
     <build>
-        <finalName>app</finalName>
+        <finalName>${my-spring-boot-app.finalName}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

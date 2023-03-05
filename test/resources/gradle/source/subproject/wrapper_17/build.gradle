@@ -25,3 +25,8 @@ tasks.withType(GroovyCompile) {
   options.encoding = 'utf-8'
   groovyOptions.encoding = 'utf-8'
 }
+
+bootJar {
+  baseName = 'my-spring-boot-app'
+  archiveFileName = 'my-spring-boot-app.jar'
+}
