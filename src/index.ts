@@ -7,26 +7,24 @@ import {runGradle} from './process_gradle';
 const core = require('@actions/core');
 const fs = require('fs');
 //https://api.adoptium.net/v3/info/available_releases
+//TODO: auto update java & gradle versions
 const JAVA_LTS_VERSION = '17';
 
 try {
-    //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
     let jvFallback = core.getInput('jv-fallback') || JAVA_LTS_VERSION;
     let pvFallback = core.getInput('pv-fallback') || null;
+    let peFallback = core.getInput('pe-fallback') || 'utf-8';
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
         workDir = getWorkingDirectory(workspace)
     }
-    let result = run(workDir, deep, jvFallback, pvFallback);
-    result.set('platform', process.platform);
-    result.set('deep', deep);
-    result.set('work-dir', workDir);
-    result.set('jv-fallback', jvFallback);
-    result.set('pv-fallback', pvFallback);
-    result.set('GITHUB_WORKSPACE', workspace || null);
-
+    let result = new Map<string, ResultType>([
+        ['GITHUB_WORKSPACE', workspace || null],
+        ['platform', process.platform]
+    ]);
+    run(result, workDir, deep, jvFallback, pvFallback, peFallback);
     console.log(JSON.stringify(Object.fromEntries(sortMap(result)), null, 4))
 
     result.forEach((value, key) => {
@@ -40,34 +38,42 @@ try {
     }
 }
 
-function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number): Map<string, ResultType> {
-    //DEFAULTS
-    let result = new Map<string, ResultType>([
-        ['cmd', null],
-        ['cmd_test', null],
-        ['cmd_build', null],
-        ['is_maven', false],
-        ['is_gradle', false],
-        ['has_wrapper', false],
-        ['java_version', null],
-        ['artifact_name', null],
-        ['cmd_test_build', null],
-        ['builder_version', null],
-        ['project_version', null],
-        ['project_encoding', null],
-        ['cmd_update_deps', null],
-        ['cmd_update_plugs', null],
-        ['cmd_update_props', null],
-        ['artifact_name_jar', null],
-        ['cmd_update_parent', null],
-        ['cmd_update_wrapper', null]
-    ]);
+function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number, peFallback: string): Map<string, ResultType> {
+    //PRE PROCESSING
+    result = !result ? new Map<string, ResultType>([]) : result;
+    result.set('cmd', null);
+    result.set('cmd_test', null);
+    result.set('cmd_build', null);
+    result.set('is_maven', false);
+    result.set('is_gradle', false);
+    result.set('has_wrapper', false);
+    result.set('java_version', null);
+    result.set('artifact_name', null);
+    result.set('artifact_names', null);
+    result.set('cmd_test_build', null);
+    result.set('builder_version', null);
+    result.set('project_version', null);
+    result.set('project_encoding', null);
+    result.set('cmd_update_deps', null);
+    result.set('cmd_update_plugs', null);
+    result.set('cmd_update_props', null);
+    result.set('artifact_name_jar', null);
+    result.set('cmd_update_parent', null);
+    result.set('artifact_names_jar', null);
+    result.set('cmd_update_wrapper', null);
+    result.set('deep', deep);
+    result.set('work-dir', workDir.toString());
+    result.set('jv-fallback', jvFallback);
+    result.set('pv-fallback', pvFallback);
+    result.set('pe-fallback', peFallback);
+
     //PROCESSING
     runMaven(result, workDir, deep);
     runGradle(result, workDir, deep);
 
     //POST PROCESSING
     result.set('project_version', result.get('project_version') || pvFallback || null);
+    result.set('project_encoding', result.get('project_encoding') || peFallback || null);
     if (!(result.get('java_version') as number) && jvFallback > 0) {
         result.set('java_version', jvFallback);
         result.set('java_version_legacy', jvFallback < 10 ? `1.${jvFallback}` : jvFallback.toString());

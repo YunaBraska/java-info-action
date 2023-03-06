@@ -109,8 +109,14 @@ function setArtifactName(result: Map<string, ResultType>, propertyMap: Map<strin
     let finalName = getValue(propertyMap, ARTIFACT_NAME_PROPS);
     if (finalName) {
         let finalNameNoJar = finalName.endsWith('.jar') ? finalName.substring(0, finalName.length - '.jar'.length) : finalName;
+        let finalNameJar = finalNameNoJar + '.jar';
+        let artifactNames_jar = (result.get('artifact_names_jar') || '').toString();
         result.set('artifact_name', finalNameNoJar);
-        result.set('artifact_name_jar', finalNameNoJar + '.jar');
+        result.set('artifact_name_jar', finalNameJar);
+        if (!artifactNames_jar.includes(finalNameJar)) {
+            result.set('artifact_names', [result.get('artifact_names'), finalNameNoJar].map(value => (value || '').toString()).filter(value => value.length > 0).join(', '));
+            result.set('artifact_names_jar', [artifactNames_jar, finalNameJar].map(value => (value || '').toString()).filter(value => value.length > 0).join(', '));
+        }
     }
 }
 

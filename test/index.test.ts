@@ -10,7 +10,7 @@ const fs = require('fs');
 
 test('[GRADLE] Read empty dir', () => {
     let dir = createEmptyDir(path.join(__dirname, 'resources/gradle/empty'));
-    let result = main.run(dir, -1, 17);
+    let result = main.run(null, dir, -1, 17, null, null);
     expect(result.get('java_version')).toEqual(17)
     expect(result.get('is_gradle')).toEqual(false)
     expect(result.get('is_maven')).toEqual(false)
@@ -20,7 +20,7 @@ test('[GRADLE] Read empty dir', () => {
 });
 
 test('[GRADLE] Read highest Java Version should be 17', () => {
-    let result_src = main.run(path.join(__dirname, 'resources/gradle/source'), -1, -1);
+    let result_src = main.run(null, path.join(__dirname, 'resources/gradle/source'), -1, -1, null, null);
     expect(result_src.get('java_version')).toEqual(17)
     expect(result_src.get('is_gradle')).toEqual(true)
     expect(result_src.get('is_maven')).toEqual(false)
@@ -28,7 +28,7 @@ test('[GRADLE] Read highest Java Version should be 17', () => {
     expect(result_src.get('builder_version')).toEqual('7.5')
     expect(result_src.get('cmd')).toEqual(process.platform === "win32" ? 'gradle.bat' : './gradlew')
 
-    let result_lv = main.run(path.join(__dirname, 'resources/gradle/language_version'), -1, -1);
+    let result_lv = main.run(null, path.join(__dirname, 'resources/gradle/language_version'), -1, -1, null, null);
     expect(result_lv.get('java_version')).toEqual(17)
     expect(result_lv.get('is_gradle')).toEqual(true)
     expect(result_lv.get('is_maven')).toEqual(false)
@@ -38,7 +38,7 @@ test('[GRADLE] Read highest Java Version should be 17', () => {
 });
 
 test('[GRADLE] Read highest Java Version with deep limit 1 should be 11', () => {
-    let result_src = main.run(path.join(__dirname, 'resources/gradle'), 1, -1);
+    let result_src = main.run(null, path.join(__dirname, 'resources/gradle'), 1, -1, null, null);
     expect(result_src.get('java_version')).toEqual(11)
     expect(result_src.get('is_gradle')).toEqual(true)
     expect(result_src.get('is_maven')).toEqual(false)
@@ -46,7 +46,7 @@ test('[GRADLE] Read highest Java Version with deep limit 1 should be 11', () => 
     expect(result_src.get('builder_version')).toEqual(null)
     expect(result_src.get('cmd')).toEqual('gradle')
 
-    let result_lv = main.run(path.join(__dirname, 'resources/gradle/language_version'), 1, -1);
+    let result_lv = main.run(null, path.join(__dirname, 'resources/gradle/language_version'), 1, -1, null, null);
     expect(result_lv.get('java_version')).toEqual(11)
     expect(result_lv.get('is_gradle')).toEqual(true)
     expect(result_lv.get('is_maven')).toEqual(false)
@@ -58,7 +58,7 @@ test('[GRADLE] Read highest Java Version with deep limit 1 should be 11', () => 
 test('[GRADLE] Read each file should have expected result', () => {
     (gradle.listGradleFiles(path.dirname(__filename), -1) as PathOrFileDescriptor[]).forEach(file => {
         let dir = path.dirname(file.toString());
-        let result = main.run(dir, 1);
+        let result = main.run(null, dir, 1, null, null, null);
 
         let hasWrapper = dir.includes('wrapper');
         let expectedVersion = javaVersionOfPath(dir);
@@ -78,7 +78,7 @@ test('[GRADLE] Read each file should have expected result', () => {
 
 test('[MAVEN] Read empty dir', () => {
     let dir = createEmptyDir(path.join(__dirname, 'resources/maven/empty'));
-    let result = main.run(dir, -1, 17);
+    let result = main.run(null, dir, -1, 17, null, null);
     expect(result.get('java_version')).toEqual(17)
     expect(result.get('is_gradle')).toEqual(false)
     expect(result.get('is_maven')).toEqual(false)
@@ -88,7 +88,7 @@ test('[MAVEN] Read empty dir', () => {
 });
 
 test('[MAVEN] Read highest Java Version should be 17', () => {
-    let result_src = main.run(path.join(__dirname, 'resources/maven'), -1, -1);
+    let result_src = main.run(null, path.join(__dirname, 'resources/maven'), -1, -1, null, null);
     expect(result_src.get('java_version')).toEqual(17)
     expect(result_src.get('is_maven')).toEqual(true)
     expect(result_src.get('has_wrapper')).toEqual(true)
@@ -97,21 +97,21 @@ test('[MAVEN] Read highest Java Version should be 17', () => {
 });
 
 test('[MAVEN] Read highest Java Version with deep limit 1 should be 11', () => {
-    let result_source = main.run(path.join(__dirname, 'resources/maven/m_release'), 1, -1);
+    let result_source = main.run(null, path.join(__dirname, 'resources/maven/m_release'), 1, -1, null, null);
     expect(result_source.get('java_version')).toEqual(11)
     expect(result_source.get('is_maven')).toEqual(true)
     expect(result_source.get('has_wrapper')).toEqual(false)
     expect(result_source.get('builder_version')).toEqual(null)
     expect(result_source.get('cmd')).toEqual('mvn')
 
-    let result_target = main.run(path.join(__dirname, 'resources/maven/m_release'), 1, -1);
+    let result_target = main.run(null, path.join(__dirname, 'resources/maven/m_release'), 1, -1, null, null);
     expect(result_target.get('java_version')).toEqual(11)
     expect(result_target.get('is_maven')).toEqual(true)
     expect(result_target.get('has_wrapper')).toEqual(false)
     expect(result_target.get('builder_version')).toEqual(null)
     expect(result_target.get('cmd')).toEqual('mvn')
 
-    let result_release = main.run(path.join(__dirname, 'resources/maven/m_release'), 1, -1);
+    let result_release = main.run(null, path.join(__dirname, 'resources/maven/m_release'), 1, -1, null, null);
     expect(result_release.get('java_version')).toEqual(11)
     expect(result_release.get('is_maven')).toEqual(true)
     expect(result_release.get('has_wrapper')).toEqual(false)
@@ -122,7 +122,7 @@ test('[MAVEN] Read highest Java Version with deep limit 1 should be 11', () => {
 test('[MAVEN] Read each file should have expected result', () => {
     (maven.listMavenFiles(path.dirname(__filename), -1) as PathOrFileDescriptor[]).forEach(file => {
         let dir = path.dirname(file.toString());
-        let result = main.run(dir, 1);
+        let result = main.run(null, dir, 1, null, null, null);
 
         let hasWrapper = dir.includes('wrapper');
         let expectedVersion = javaVersionOfPath(dir);
@@ -138,17 +138,17 @@ test('[MAVEN] Read each file should have expected result', () => {
 });
 
 test('[MAVEN] artifact_name && artifact_name_jar', () => {
-    let result_src = main.run(path.join(__dirname, 'resources/maven/project_version/project_version_7.8.9_11'), -1, -1);
+    let result_src = main.run(null, path.join(__dirname, 'resources/maven/project_version/project_version_7.8.9_11'), -1, -1, null, null);
     expect(result_src.get('artifact_name')).toEqual("my-spring-boot-app")
     expect(result_src.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
 });
 
 test('[GRADLE] artifact_name && artifact_name_jar', () => {
-    let result_src = main.run(path.join(__dirname, 'resources/gradle/source/subproject'), -1, -1);
+    let result_src = main.run(null, path.join(__dirname, 'resources/gradle/source/subproject'), -1, -1, null, null);
     expect(result_src.get('artifact_name')).toEqual("my-spring-boot-app")
     expect(result_src.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
 
-    let result_lv = main.run(path.join(__dirname, 'resources/gradle/language_version/subproject'), -1, -1);
+    let result_lv = main.run(null, path.join(__dirname, 'resources/gradle/language_version/subproject'), -1, -1, null, null);
     expect(result_lv.get('artifact_name')).toEqual("my-spring-boot-app")
     expect(result_lv.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
 });

@@ -17,6 +17,10 @@ inputs:
     description: 'project version fallback if no project version was found'
     required: false
     default: 'null'
+  pe-fallback:
+    description: 'project encoding fallback if no project encoding was found'
+    required: false
+    default: 'null'
 outputs:
   java_version:
     description: 'java version - parsed from build files e.g. 6,7,8,9,10,11'
@@ -38,6 +42,10 @@ outputs:
     description: 'artifact name if defined e.g. "archiveFileName, baseName, finalName"'
   artifact_name_jar:
     description: 'artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"'
+  artifact_names:
+    description: 'artifact names if defined e.g. "archiveFileName, baseName, finalName"'
+  artifact_names_jar:
+    description: 'artifact names ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"'
   cmd:
     description: 'build command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat'
   cmd_test:

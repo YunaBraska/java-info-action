@@ -32,6 +32,7 @@ gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
     work-dir: '.'
     jv-fallback: 17
     pv-fallback: '0.0.1'
+    pe-fallback: 'utf-8'
 
   # PRINT
 - name: "Print Java Version"
@@ -65,12 +66,13 @@ gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
 
 ### Inputs
 
-| parameter   | default      | description                                                    |
-|-------------|--------------|----------------------------------------------------------------|
-| work-dir    | '.'          | folder scan ('.' == current)                                   |
-| deep        | -1           | folder scan deep (-1 == endless)                               |
-| jv-fallback | <Latest_LTS> | fallback for "java_version" if no java version was found       |
-| pv-fallback | null         | fallback for "project_version" if no project version was found |
+| parameter   | default      | description                                                      |
+|-------------|--------------|------------------------------------------------------------------|
+| work-dir    | '.'          | folder scan ('.' == current)                                     |
+| deep        | -1           | folder scan deep (-1 == endless)                                 |
+| jv-fallback | <Latest_LTS> | fallback for "java_version" if no java version was found         |
+| pv-fallback | null         | fallback for "project_version" if no project version was found   |
+| pe-fallback | utf-8        | fallback for "project_encoding" if no project encoding was found |
 
 ### Outputs
 
