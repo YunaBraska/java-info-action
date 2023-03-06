@@ -87,7 +87,7 @@ function getValues(propertyMap: Map<string, string>, nodeNames: string[], regex:
 
 function addPropertiesToResult(result: Map<string, ResultType>, propertyMap: Map<string, string>): void {
     Array.from(propertyMap.keys()).forEach(key => {
-        result.set('x_' + key.replace('#', '-'), propertyMap.get(key) || '')
+        result.set('x_' + key.replace('#', '-').replace(/\./g, '_'), propertyMap.get(key) || '')
     });
 }
 

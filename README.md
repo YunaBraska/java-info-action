@@ -35,7 +35,18 @@ gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
 
   # PRINT
 - name: "Print Java Version"
-  run: echo "java_version [${{ steps.java_info.outputs.java_version }}]"
+  run: |
+    echo "java_version [${{ steps.java_info.outputs.java_version }}]"
+    echo "artifact_name [${{ steps.java_info.outputs.artifact_name }}]"
+    echo "project_version [${{ steps.java_info.outputs.project_version }}]"
+    echo "project_encoding [${{ steps.java_info.outputs.project_encoding }}]"
+    echo "is_gradle [${{ steps.java_info.outputs.is_gradle }}]"
+    echo "is_maven [${{ steps.java_info.outputs.is_maven }}]"
+    echo "has_wrapper [${{ steps.java_info.outputs.has_wrapper }}]"
+    echo "x_sourceCompatibility [${{ steps.java_info.outputs.x_sourceCompatibility }}]"
+    echo "x_project_build_finalName [${{ steps.java_info.outputs.x_project_build_finalName }}]"
+    echo "x_groovyOptions_encoding [${{ steps.java_info.outputs.x_groovyOptions_encoding }}]"
+    echo "x_net_minidev_json-smart_version [${{ steps.java_info.outputs.x_project_dependencies_dependency_net_minidev_json-smart_version }}]"
 
   # SETUP JAVA
 - name: "Setup Java"

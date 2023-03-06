@@ -46,5 +46,14 @@ jobs:
       - name: "Validate Java Version"
         run: |
           echo "java_version [${{ steps.read_java.outputs.java_version }}]"
+          echo "artifact_name [${{ steps.read_java.outputs.artifact_name }}]"
           echo "project_version [${{ steps.read_java.outputs.project_version }}]"
+          echo "project_encoding [${{ steps.read_java.outputs.project_encoding }}]"
+          echo "is_gradle [${{ steps.read_java.outputs.is_gradle }}]"
+          echo "is_maven [${{ steps.read_java.outputs.is_maven }}]"
+          echo "has_wrapper [${{ steps.read_java.outputs.has_wrapper }}]"
+          echo "x_sourceCompatibility [${{ steps.read_java.outputs.x_sourceCompatibility }}]"
+          echo "x_project_build_finalName [${{ steps.read_java.outputs.x_project_build_finalName }}]"
+          echo "x_groovyOptions_encoding [${{ steps.read_java.outputs.x_groovyOptions_encoding }}]"
+          echo "X_net_minidev_json-smart_version [${{ steps.read_java.outputs.x_project_dependencies_dependency_net_minidev_json-smart_version }}]"
           if [ "${{ steps.read_java.outputs.java_version }}" != "17" ]; then echo "Unexpected Java Version [${{ steps.read_java.outputs.java_version }}] should have been 17"; exit 1; fi
