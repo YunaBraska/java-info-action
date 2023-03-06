@@ -68,7 +68,7 @@ gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
 | java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                                                   |
 | java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                                                           |
 | project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
-| project_encoding    | <Latest_LTS> | project encoding - parsed from build files e.g. utf-8                                                                       |
+| project_encoding    | null         | project encoding - parsed from build files e.g. utf-8                                                                       |
 | has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                                                |
 | builder_version     | null         | version of the wrapper                                                                                                      |
 | is_gradle           | false        | true if a gradle build file was found                                                                                       |
