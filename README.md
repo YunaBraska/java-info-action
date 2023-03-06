@@ -1,10 +1,9 @@
 # java-info-action
 
-Reads out the java version from gradle or maven.
+Fast Maven/Gradle parser - reads properties (e.g. java version) and provides independent build commands (e.g. gradle,
+gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
 
-This is a parser, it won't run any gradle/maven command as these commands are really expensive in time and requirements.
-
-It also creates some pre-generated commends dependent on the build tool and OS. e.g. gradle, gradlew, gradle.bat
+*Does not use any maven / gradle commands*
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)
 
@@ -66,9 +65,10 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 
 | Name                | default      | description                                                                                                                 |
 |---------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------|
-| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
 | java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                                                   |
 | java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                                                           |
+| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
+| project_encoding    | <Latest_LTS> | project encoding - parsed from build files e.g. utf-8                                                                       |
 | has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                                                |
 | builder_version     | null         | version of the wrapper                                                                                                      |
 | is_gradle           | false        | true if a gradle build file was found                                                                                       |
@@ -85,13 +85,14 @@ It also creates some pre-generated commends dependent on the build tool and OS. 
 | cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
 | cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
 | cmd_resolve_plugs   | -            | command e.g. <br> *  gradle --refresh-dependencies check -x test <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true |
-| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version <Latest_LTS>  <br>*  mvn -B -q -N io.takari:maven:wrapper                   |
+| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version \<Latest_LTS>  <br>*  mvn -B -q -N io.takari:maven:wrapper                  |
+| x_\<propertyKey>    | -            | other unhandled build script properties. These differs between maven an gradle                                              |
 
 ### \[DEV] Setup Environment
 
-* setup or clean environment `./clean_node.sh`
-* Run `npm run test:coverage` to run all tests
-* Run `npm run build` to "compile" `index.ts` to `./lib/index.js`
+* clean environment: `./clean_node.sh`
+* Build: `npm run build` to "compile" `index.ts` to `./lib/index.js`
+* Test: `npm run test:coverage`
 * NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 

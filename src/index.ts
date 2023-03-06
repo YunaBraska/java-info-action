@@ -1,18 +1,18 @@
 //https://github.com/actions/toolkit/tree/main/packages/
 import {PathOrFileDescriptor} from "fs";
-import {XmlDocument, XmlElement} from "xmldoc";
+import {ResultType} from './common_processing';
+import {runMaven} from './process_maven';
+import {runGradle} from './process_gradle';
 
 const core = require('@actions/core');
 const fs = require('fs');
-const path = require('path');
-const xmlReader = require('xmldoc');
-
-type ResultType = string | number | boolean | null;
+//https://api.adoptium.net/v3/info/available_releases
+const JAVA_LTS_VERSION = '17';
 
 try {
     //TODO: auto update java & gradle versions
     let workDir = core.getInput('work-dir');
-    let jvFallback = core.getInput('jv-fallback') || 17;
+    let jvFallback = core.getInput('jv-fallback') || JAVA_LTS_VERSION;
     let pvFallback = core.getInput('pv-fallback') || null;
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
@@ -20,6 +20,7 @@ try {
         workDir = getWorkingDirectory(workspace)
     }
     let result = run(workDir, deep, jvFallback, pvFallback);
+    result.set('platform', process.platform);
     result.set('deep', deep);
     result.set('work-dir', workDir);
     result.set('jv-fallback', jvFallback);
@@ -49,364 +50,33 @@ function run(workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pv
         ['is_gradle', false],
         ['has_wrapper', false],
         ['java_version', null],
+        ['artifact_name', null],
         ['cmd_test_build', null],
         ['builder_version', null],
         ['project_version', null],
+        ['project_encoding', null],
         ['cmd_update_deps', null],
         ['cmd_update_plugs', null],
         ['cmd_update_props', null],
+        ['artifact_name_jar', null],
         ['cmd_update_parent', null],
         ['cmd_update_wrapper', null]
     ]);
     //PROCESSING
-    let mavenFiles = listMavenFiles(workDir, deep);
-    let gradleFiles = listGradleFiles(workDir, deep);
-    if (gradleFiles.length > 0) {
-        result = readGradle(gradleFiles, result);
-    } else if (mavenFiles.length > 0) {
-        result = readMaven(mavenFiles, result);
-    }
+    runMaven(result, workDir, deep);
+    runGradle(result, workDir, deep);
 
     //POST PROCESSING
     result.set('project_version', result.get('project_version') || pvFallback || null);
-    result.set('java_version', (result.get('java_version') as number) || jvFallback || null);
-
-    result.set('java_version_legacy', toLegacyJavaVersion(result.get('java_version')));
-    result.set('is_gradle', gradleFiles.length > 0);
-    result.set('is_maven', mavenFiles.length > 0);
-    return result;
-}
-
-function readMaven(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
-    result.set('is_maven', mavenFiles.length > 0);
-    mavenFiles.forEach(file => {
-            try {
-                let dir = path.dirname(file.toString());
-                let wrapperMapFile = path.join(dir, '.mvn', 'wrapper', 'maven-wrapper.properties');
-
-                let xmlDocument = new xmlReader.XmlDocument(fs.readFileSync(file, {encoding: 'utf-8'}));
-                let propertyMap = readPropertiesMaven(xmlDocument);
-
-                //PROJECT VERSION
-                let projectVersion = readProjectVersionMaven(xmlDocument);
-                if (projectVersion) {
-                    result.set('project_version', projectVersion);
-                }
-
-                //JAVA VERSION
-                let javaVersion = readJavaVersionMaven(xmlDocument);
-                if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
-                    result.set('java_version', javaVersion);
-                }
-
-                //ARTIFACT_NAME 1
-                let finalName = getNodeValueMaven(xmlDocument, propertyMap, ["build", "finalName"])
-                if (finalName) {
-                    let finalNameNoJar = finalName.endsWith('.jar') ? finalName.substring(0, finalName.length - '.jar'.length) : finalName;
-                    result.set('base_name', finalNameNoJar);
-                    result.set('artifact_name', finalNameNoJar);
-                    result.set('artifact_name_jar', finalNameNoJar + '.jar');
-                }
-
-                if (fs.existsSync(path.join(dir, 'mvnw.cmd')) || fs.existsSync(path.join(dir, 'mvnw')) || fs.existsSync(wrapperMapFile)) {
-                    result.set('has_wrapper', true);
-                }
-
-                if (fs.existsSync(wrapperMapFile)) {
-                    result.set('builder_version', readBuilderVersion((wrapperMapFile as PathOrFileDescriptor), (result.get('builder_version') as string | null)));
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    )
-
-    result.set('cmd', result.get('has_wrapper') ? (process.platform === "win32" ? 'mvn.cmd' : './mvnw') : 'mvn');
-    result.set('cmd_test', result.get('cmd') + ' clean test verify -B');
-    result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B');
-    result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B');
-    result.set('cmd_update_deps', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins -B -q');
-    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve -B -q');
-    result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q -N io.takari:maven:wrapper');
-    return result;
-}
-
-function readProjectVersionMaven(xmlDocument: XmlDocument): string | null | undefined {
-    return getNodeByPath(xmlDocument, ['version'], 0)
-        ?.filter(node => node.type === 'element')
-        ?.map(node => (node as XmlElement).val?.trim())[0];
-}
-
-function readJavaVersionMaven(xmlDocument: XmlDocument): number | null | undefined {
-    let propertyMap = new Map(
-        getNodeByPath(xmlDocument, ['properties'], 0)[0]
-            ?.children.filter(node => node.type === 'element')
-            ?.map(node => [(node as XmlElement).name, (node as XmlElement).val])
-    );
-    let javaVersions = getNodeByPath(xmlDocument, ['build', 'plugins', 'plugin|artifactId=maven-compiler-plugin', 'configuration'], 0)[0]
-        ?.children.filter(node => node.type === 'element')
-        ?.map(node => (node as XmlElement).val?.trim());
-
-
-    let result: number | null = null;
-    javaVersions?.forEach(jv => {
-        let version = javaVersionOf(jv.startsWith('${') ? propertyMap.get(jv.substring(2, jv.length - 1)) : jv);
-        result = version && (!result || result < version) ? version : result;
-    })
-    for (const pjv of ['java.version', 'java-version', 'maven.compiler.source', 'maven.compiler.target', 'maven.compiler.release']) {
-        let jv = propertyMap.get(pjv);
-        let version = jv ? javaVersionOf(jv.startsWith('${') ? propertyMap.get(jv.substring(2, jv.length - 1)) : jv) : undefined;
-        result = version && (!result || result < version) ? version : result;
+    if (!(result.get('java_version') as number) && jvFallback > 0) {
+        result.set('java_version', jvFallback);
+        result.set('java_version_legacy', jvFallback < 10 ? `1.${jvFallback}` : jvFallback.toString());
     }
     return result;
 }
-
-function readPropertiesMaven(xmlDocument: XmlDocument): Map<string, string> {
-    let result = new Map(
-        getNodeByPath(xmlDocument, ['properties'], 0)[0]
-            ?.children.filter(node => node.type === 'element')
-            ?.map(node => [(node as XmlElement).name, (node as XmlElement).val])
-    );
-
-    Array.from(result.keys()).forEach(key => {
-        let resolvedValue = result.get(key)?.replace(/\${(.*?)}/g, (match, placeholder) => {
-            return result.get(placeholder) || match;
-        });
-        if (resolvedValue) {
-            result.set(key, resolvedValue);
-        }
-    });
-    return result;
-
-}
-
-function getNodeValueMaven(xmlDocument: XmlDocument, propertyMap: Map<string, string>, nodeNames: string[]): string | null {
-    let nodeValue = getNodeByPath(xmlDocument, nodeNames, 0)
-        ?.filter(node => node.type === 'element')
-        ?.map(node => (node as XmlElement).val?.trim())
-        ?.filter(nv => nv.length != 0)
-        ?.[0];
-
-    return nodeValue? nodeValue.replace(/\${(.*?)}/g, (match, placeholder) => {
-        return propertyMap.get(placeholder) || match;
-    }) : null;
-}
-
-function readGradle(gradleFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
-    let gradleLTS = '7.6';
-    result.set('is_gradle', gradleFiles.length > 0);
-    gradleFiles.forEach(file => {
-            try {
-                let dir = path.dirname(file.toString());
-                let wrapperMapFile = path.join(dir, 'gradle', 'wrapper', 'gradle-wrapper.properties');
-
-                let propertyMap = readPropertiesGradle(file);
-
-                //PROJECT_VERSION
-                let projectVersion = getMapValue(propertyMap, 'project.version', '\\d+');
-                if (projectVersion) {
-                    result.set('project_version', projectVersion);
-                }
-
-                //JAVA_VERSION
-                let javaVersion = readJavaVersionGradle(propertyMap);
-                if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
-                    result.set('java_version', javaVersion);
-                }
-
-                //ARTIFACT_NAME 1
-                let baseName = getMapValue(propertyMap, "baseName", null);
-                if (baseName) {
-                    let baseNameNoJar = baseName.endsWith('.jar') ? baseName.substring(0, baseName.length - '.jar'.length) : baseName;
-                    result.set('base_name', baseNameNoJar);
-                    result.set('artifact_name', baseNameNoJar);
-                    result.set('artifact_name_jar', baseNameNoJar + '.jar');
-                }
-
-                //ARTIFACT_NAME 2
-                let archiveFileName = getMapValue(propertyMap, "archiveFileName", null);
-                if (archiveFileName) {
-                    let archiveFileNameNoJar = archiveFileName.endsWith('.jar') ? archiveFileName.substring(0, archiveFileName.length - '.jar'.length) : archiveFileName;
-                    result.set('artifact_name', archiveFileNameNoJar);
-                    result.set('archive_file_name', archiveFileNameNoJar);
-                    result.set('artifact_name_jar', archiveFileNameNoJar + '.jar');
-                }
-
-                if (fs.existsSync(path.join(dir, 'gradle.bat')) || fs.existsSync(path.join(dir, 'gradlew')) || fs.existsSync(wrapperMapFile)) {
-                    result.set('has_wrapper', true);
-                }
-
-                if (fs.existsSync(wrapperMapFile)) {
-                    result.set('builder_version', readBuilderVersion(wrapperMapFile, (result.get('builder_version') as string | null)));
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    )
-    result.set('cmd', result.get('has_wrapper') ? (process.platform === "win32" ? 'gradle.bat' : './gradlew') : 'gradle');
-    result.set('cmd_test', result.get('cmd') + ' clean test');
-    result.set('cmd_build', result.get('cmd') + ' clean build -x test');
-    result.set('cmd_test_build', result.get('cmd') + ' clean build');
-    result.set('cmd_update_deps', result.get('cmd') + ' check');
-    result.set('cmd_update_plugs', result.get('cmd') + ' check');
-    result.set('cmd_update_props', result.get('cmd') + ' check');
-    result.set('cmd_update_parent', result.get('cmd') + ' check');
-    result.set('cmd_resolve_plugs', result.get('cmd') + ' check');
-    result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
-    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version ' + gradleLTS);
-    return result;
-}
-
-function readBuilderVersion(wrapperMapFile: PathOrFileDescriptor, fallback: string | null): string | null {
-    if (fs.existsSync(wrapperMapFile.toString())) {
-        let wrapperMap = readPropertiesGradle(wrapperMapFile);
-        let distributionUrl = wrapperMap.get('distributionUrl')
-        let builderVersion = distributionUrl ? new RegExp('(\\d[\._]?){2,}').exec(distributionUrl) : null;
-        return builderVersion ? builderVersion[0] : fallback;
-    }
-    return fallback;
-}
-
-function javaVersionOf(string: string | undefined | null): number | null {
-    if (string) {
-        string = string.includes("_") ? string.substring(string.indexOf("_") + 1) : string;
-        string = string.includes(".") ? string.substring(string.indexOf(".") + 1) : string;
-        return parseInt(string.trim());
-    }
-    return null;
-}
-
-function readJavaVersionGradle(propertyMap: Map<string, string>): number | null {
-    let value = getMapValue(propertyMap, 'sourceCompatibility', '\\d+') || getMapValue(propertyMap, 'targetCompatibility', '\\d+')
-    return value ? javaVersionOf(value) : null;
-}
-
-function readPropertiesGradle(file: PathOrFileDescriptor): Map<string, string> {
-    let result = new Map<string, string>;
-    fs.readFileSync(file, {encoding: 'utf-8'}).split(/\r?\n/).forEach(function (line: string) {
-        let eq = line.indexOf('=');
-        if (eq > 0) {
-            let key = line.substring(0, eq).trim()
-            let spaceIndex = key.lastIndexOf(' ');
-            key = spaceIndex > 0 ? key.substring(spaceIndex + 1).trim() : key;
-            let value = line.substring(eq + 1).trim().replace(/['"]+/g, '');
-            let counter = getKeyOccurrence(result, key)
-            result.set(counter > 0 ? key + '#' + counter : key, value);
-        } else if (!result.get('sourceCompatibility') && !result.get('targetCompatibility') && line.includes('languageVersion.set')) {
-            result.set('targetCompatibility', line.trim()
-                .replace('JavaLanguageVersion', '')
-                .replace('languageVersion.set', '')
-                .replace('.of', '').trim()
-                .replace(/[()]+/g, '')
-                .replace(/['"]+/g, '')
-            );
-        } else {
-            //GRADLE KTS
-            let eq = line.indexOf('.set(');
-            if (eq > 0) {
-                let key = line.substring(0, eq).trim()
-                let value = line.substring(eq + 4).trim().replace(/['"]+/g, '').replace(/[()]+/g, '').replace(/['"]+/g, '');
-                let counter = getKeyOccurrence(result, key)
-                result.set(counter > 0 ? key + '#' + counter : key, value);
-            }
-        }
-    })
-    return result;
-}
-
-function listGradleFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
-    return listFiles(workDir, !deep ? 1 : deep, 'build\.gradle.*', [], 0);
-}
-
-function listMavenFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
-    return listFiles(workDir, !deep ? 1 : deep, 'pom.*\.xml', [], 0);
-}
-
-function listFiles(dir: PathOrFileDescriptor, deep: number, filter: string, resultList: PathOrFileDescriptor[], deep_current: number): PathOrFileDescriptor[] {
-    deep = deep || 1
-    deep_current = deep_current || 0
-    resultList = resultList || []
-    if (deep > -1 && deep_current > deep) {
-        return resultList;
-    }
-    const files = fs.readdirSync(dir.toString(), {withFileTypes: true});
-    for (const file of files) {
-        if (file.isDirectory()) {
-            listFiles(path.join(dir.toString(), file.name), deep, filter, resultList, deep_current++);
-        } else if (!filter || new RegExp(filter).test(file.name)) {
-            resultList.push(path.join(dir.toString(), file.name));
-        }
-    }
-    return resultList;
-}
-
 
 function getWorkingDirectory(workspace: string | undefined | null): PathOrFileDescriptor {
     return workspace && fs.existsSync(workspace) ? workspace : process.cwd();
-}
-
-function getNodeByPath(node: XmlElement, nodeNames: string[], index: number): XmlElement[] {
-    index = index || 0;
-    if (nodeNames.length === index) {
-        return [node];
-    }
-
-    let nodeName = nodeNames[index].split('|');
-    return node.childrenNamed(nodeName[0])
-        .filter(node => node.type === 'element')
-        .filter(node => matchFilter(node, nodeName[1]))
-        .filter(node => node.childrenNamed(nodeNames[index + 1]))
-        .flatMap(node => getNodeByPath(node, nodeNames, index + 1))
-}
-
-function matchFilter(node: XmlElement, filter: string): boolean {
-    if (!node || !filter) {
-        return true;
-    }
-    let kv = filter.split('=');
-    let childNode = node.childrenNamed(kv[0])
-    return childNode && childNode[0]?.val === kv[1];
-}
-
-function toLegacyJavaVersion(javaVersion: ResultType | undefined): string | null {
-    if (javaVersion) {
-        return (javaVersion as number) < 10 ? '1.' + javaVersion : javaVersion.toString();
-    }
-    return null;
-}
-
-
-function getKeyOccurrence(map: Map<string, string>, key: string): number {
-    if (map.get(key)) {
-        let count = 0;
-        map.forEach((v, k) => {
-            k = k.includes('#') ? k.substring(0, k.indexOf('#')) : k;
-            if (key === k) {
-                count++
-            }
-        });
-        return count;
-    }
-    return 0;
-}
-
-function getMapValue(map: Map<string, string>, key: string, regex: string | undefined | null): string | null {
-    if (map.get(key)) {
-        for (let [mapKey, mapValue] of map) {
-            if (mapValue !== key && (mapKey === key || mapKey.startsWith(key + '#'))) {
-                mapValue = map.get(mapValue) || mapValue
-                if (!regex || (mapValue && new RegExp(regex).exec(mapValue))) {
-                    return mapValue;
-                }
-            }
-        }
-    }
-    return null;
 }
 
 function sortMap(input: Map<string, any>): Map<string, any> {
@@ -414,4 +84,4 @@ function sortMap(input: Map<string, any>): Map<string, any> {
     return new Map(sortedEntries);
 }
 
-module.exports = {run, listGradleFiles, listMavenFiles};
+module.exports = {run};

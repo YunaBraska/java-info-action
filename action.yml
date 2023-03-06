@@ -19,9 +19,17 @@ inputs:
     default: 'null'
 outputs:
   java_version:
-    description: 'java version - parsed from build files'
+    description: 'java version - parsed from build files e.g. 6,7,8,9,10,11'
+  java_version_legacy:
+    description: 'java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11'
+  project_version:
+    description: 'project version - parsed from build files e.g. 1.2.3'
+  project_encoding:
+    description: 'project encoding - parsed from build files e.g. utf-8'
   has_wrapper:
     description: 'if a wrapper exists - e.g. gradlew, mvnw,...'
+  builder_version:
+    description: 'version of the wrapper'
   is_gradle:
     description: 'true if a gradle build was found'
   is_maven:
