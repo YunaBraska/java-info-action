@@ -1,5 +1,5 @@
 name: 'Java Info Action'
-description: 'Detects the Java Version of Gradle and Maven'
+description: 'Fast Maven/Gradle parser. This dynamic GitHub action automatically detects and extracts crucial information such as Java version, project version, and encoding. It also provides essential build commands and properties to make your development process more independent, efficient and streamlined.'
 inputs:
   deep:
     description: 'folder scan deep (-1 == endless)'

@@ -1,7 +1,10 @@
 # java-info-action
 
-Fast Maven/Gradle parser - reads properties (e.g. java version) and provides independent build commands (e.g. gradle,
-gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
+Fast Maven/Gradle parser.
+This dynamic GitHub action automatically detects and extracts crucial information such as Java version, project version,
+and encoding.
+It also provides essential build commands and properties to make your development process more independent, efficient
+and streamlined.
 
 *Does not use any maven / gradle commands*
 
@@ -98,14 +101,14 @@ gradlew, gradle.bat, mvn, mvnw, mvnw.bat).
 | cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
 | cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
 | cmd_resolve_plugs   | -            | command e.g. <br> *  gradle --refresh-dependencies check -x test <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true |
-| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version \<Latest_LTS>  <br>*  mvn -B -q -N io.takari:maven:wrapper                  |
+| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version \<Latest_LTS>  <br>*  mvn -B -q wrapper:wrapper                             |
 | x_\<propertyKey>    | -            | other unhandled build script properties. These differs between maven an gradle                                              |
 
 ### \[DEV] Setup Environment
 
 * clean environment: `./clean_node.sh`
 * Build: `npm run build` to "compile" `index.ts` to `./lib/index.js`
-* Test: `npm run test:coverage`
+* Test: `npm run build && npm run test:coverage`
 * NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 * Hint: please do not remove the node modules as they are required for custom GitHub actions :(
 
