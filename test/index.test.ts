@@ -69,6 +69,7 @@ test('[GRADLE] Read each file should have expected result', () => {
         expect(result.get('has_wrapper')).toEqual(hasWrapper)
         expect(result.get('is_gradle')).toEqual(true)
         expect(result.get('is_maven')).toEqual(false)
+        expect(result.get('builder_name')).toEqual('Gradle')
         expect(result.get('builder_version')).toEqual(hasWrapper ? '7.5' : null)
         expect(result.get('cmd')).toEqual(hasWrapper ? (process.platform === "win32" ? 'gradle.bat' : './gradlew') : 'gradle')
     });
@@ -131,7 +132,9 @@ test('[MAVEN] Read each file should have expected result', () => {
         expect(result.get('project_version')).toEqual(expectedProjectVersion)
         expect(result.get('java_version_legacy')).toEqual(expectedVersion === 8 ? '1.8' : expectedVersion?.toString())
         expect(result.get('has_wrapper')).toEqual(hasWrapper)
+        expect(result.get('is_gradle')).toEqual(false)
         expect(result.get('is_maven')).toEqual(true)
+        expect(result.get('builder_name')).toEqual('Maven')
         expect(result.get('builder_version')).toEqual(hasWrapper ? '3.6.3' : null)
         expect(result.get('cmd')).toEqual(hasWrapper ? (process.platform === "win32" ? 'mvnw.cmd' : './mvnw') : 'mvn')
     });

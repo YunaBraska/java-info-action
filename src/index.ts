@@ -46,6 +46,7 @@ function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, dee
     result.set('cmd_build', null);
     result.set('is_maven', false);
     result.set('is_gradle', false);
+    result.set('builder_name', null);
     result.set('has_wrapper', false);
     result.set('java_version', null);
     result.set('artifact_name', null);

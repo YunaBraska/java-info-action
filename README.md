@@ -47,6 +47,7 @@ and streamlined.
     echo "is_gradle [${{ steps.java_info.outputs.is_gradle }}]"
     echo "is_maven [${{ steps.java_info.outputs.is_maven }}]"
     echo "has_wrapper [${{ steps.java_info.outputs.has_wrapper }}]"
+    echo "builder_name [${{ steps.java_info.outputs.builder_name }}]"
     echo "x_sourceCompatibility [${{ steps.java_info.outputs.x_sourceCompatibility }}]"
     echo "x_project_build_finalName [${{ steps.java_info.outputs.x_project_build_finalName }}]"
     echo "x_groovyOptions_encoding [${{ steps.java_info.outputs.x_groovyOptions_encoding }}]"
@@ -86,6 +87,7 @@ and streamlined.
 | project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
 | project_encoding    | null         | project encoding - parsed from build files e.g. utf-8                                                                       |
 | has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                                                |
+| builder_name        | null         | Name of the builder \[Gradle, Maven, null]                                                                                  |
 | builder_version     | null         | version of the wrapper                                                                                                      |
 | is_gradle           | false        | true if a gradle build file was found                                                                                       |
 | is_maven            | false        | true if a maven build file was found                                                                                        |

@@ -12,8 +12,9 @@ export function runMaven(result: Map<string, ResultType>, workDir: PathOrFileDes
     let files = listMavenFiles(workDir, deep);
     if (files.length > 0) {
         process(files, result);
+        result.set('builder_name', 'Maven');
+        result.set('is_maven', true);
     }
-    result.set('is_maven', files.length > 0);
 }
 
 export function listMavenFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
@@ -21,7 +22,6 @@ export function listMavenFiles(workDir: PathOrFileDescriptor, deep: number): Pat
 }
 
 function process(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
-    result.set('is_maven', mavenFiles.length > 0);
     mavenFiles.forEach(file => {
             try {
                 let dir = path.dirname(file.toString());

@@ -54,6 +54,7 @@ jobs:
           echo "is_gradle [${{ steps.read_java.outputs.is_gradle }}]"
           echo "is_maven [${{ steps.read_java.outputs.is_maven }}]"
           echo "has_wrapper [${{ steps.read_java.outputs.has_wrapper }}]"
+          echo "builder_name [${{ steps.read_java.outputs.builder_name }}]"
           echo "x_sourceCompatibility [${{ steps.read_java.outputs.x_sourceCompatibility }}]"
           echo "x_project_build_finalName [${{ steps.read_java.outputs.x_project_build_finalName }}]"
           echo "x_groovyOptions_encoding [${{ steps.read_java.outputs.x_groovyOptions_encoding }}]"

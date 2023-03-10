@@ -9,8 +9,9 @@ export function runGradle(result: Map<string, ResultType>, workDir: PathOrFileDe
     let files = listGradleFiles(workDir, deep);
     if (files.length > 0) {
         process(files, result);
+        result.set('builder_name', 'Gradle');
+        result.set('is_gradle', true);
     }
-    result.set('is_gradle', files.length > 0);
 }
 
 export function listGradleFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
@@ -29,7 +30,6 @@ export function readBuilderVersion(wrapperMapFile: PathOrFileDescriptor, fallbac
 
 
 function process(gradleFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
-    result.set('is_gradle', gradleFiles.length > 0);
     gradleFiles.forEach(file => {
             try {
                 let dir = path.dirname(file.toString());
