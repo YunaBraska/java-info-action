@@ -46,7 +46,6 @@ export function addKeyValue(map: Map<string, string>, key: string, value: string
 }
 
 export function listFiles(dir: PathOrFileDescriptor, deep: number, filter: string, resultList: PathOrFileDescriptor[], deep_current: number): PathOrFileDescriptor[] {
-    deep = deep || 1
     deep_current = deep_current || 0
     resultList = resultList || []
     if (deep > -1 && deep_current > deep) {

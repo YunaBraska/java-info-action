@@ -45,3 +45,7 @@ __pycache__
 
 /cc-reporter*
 /public-key.asc
+
+#Seems to be not needed in pipeline
+node_modules/fsevents/
+node_modules/fsevents/*

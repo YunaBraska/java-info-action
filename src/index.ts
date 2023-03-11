@@ -40,6 +40,7 @@ try {
 
 function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number, peFallback: string): Map<string, ResultType> {
     //PRE PROCESSING
+    deep = !deep ? 1 : deep;
     result = !result ? new Map<string, ResultType>([]) : result;
     result.set('cmd', null);
     result.set('cmd_test', null);

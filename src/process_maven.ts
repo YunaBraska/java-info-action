@@ -18,7 +18,7 @@ export function runMaven(result: Map<string, ResultType>, workDir: PathOrFileDes
 }
 
 export function listMavenFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
-    return listFiles(workDir, !deep ? 1 : deep, 'pom.*\.xml', [], 0);
+    return listFiles(workDir, deep, 'pom.*\.xml', [], 0);
 }
 
 function process(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {
