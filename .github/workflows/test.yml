@@ -9,31 +9,21 @@ on:
       - '**.md'
 
 jobs:
-  build:
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
     steps:
-      - name: "Validate Input"
-        id: "inputs"
-        run: |
-          echo "--------------------- VALIDATION ---------------"
-          if [ "$GITHUB_ACTOR" != "YunaBraska" ]; then echo "Permission denied for user [$GITHUB_ACTOR]"; exit 1; fi
-          echo "--------------------- ENVS ---------------------"
-          env
       - name: "Checkout"
         uses: actions/checkout@main
+        with:
+          fetch-depth: 500
       - name: "Setup Node"
         uses: actions/setup-node@main
         with:
           node-version: "16"
           cache: npm
-      - name: "update dependencies"
-        run: |
-          npm outdated || true 
-          npm update --save
-          npm audit fix --force
       - name: "Run Tests"
         run: |
           npm ci && npm run test:coverage
