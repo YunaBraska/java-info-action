@@ -21,8 +21,7 @@ try {
         workDir = getWorkingDirectory(workspace)
     }
     let result = new Map<string, ResultType>([
-        ['GITHUB_WORKSPACE', workspace || null],
-        ['platform', process.platform]
+        ['GITHUB_WORKSPACE', workspace || null]
     ]);
     run(result, workDir, deep, jvFallback, pvFallback, peFallback);
     console.log(JSON.stringify(Object.fromEntries(sortMap(result)), null, 4))
@@ -68,6 +67,7 @@ function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, dee
     result.set('jv-fallback', jvFallback);
     result.set('pv-fallback', pvFallback);
     result.set('pe-fallback', peFallback);
+    result.set('platform', process.platform);
 
     //PROCESSING
     runMaven(result, workDir, deep);

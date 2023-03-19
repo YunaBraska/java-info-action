@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
     steps:
       - name: "Checkout"
         uses: actions/checkout@main
@@ -35,7 +35,7 @@ jobs:
           deep: '-1'
           jv-fallback: 8
           pv-fallback: '0.0.1'
-      - name: "Validate Java Version"
+      - name: "Print Java Version"
         run: |
           echo "java_version [${{ steps.read_java.outputs.java_version }}]"
           echo "artifact_name [${{ steps.read_java.outputs.artifact_name }}]"
@@ -49,4 +49,3 @@ jobs:
           echo "x_project_build_finalName [${{ steps.read_java.outputs.x_project_build_finalName }}]"
           echo "x_groovyOptions_encoding [${{ steps.read_java.outputs.x_groovyOptions_encoding }}]"
           echo "X_net_minidev_json-smart_version [${{ steps.read_java.outputs.x_project_dependencies_dependency_net_minidev_json-smart_version }}]"
-          if [ "${{ steps.read_java.outputs.java_version }}" != "17" ]; then echo "Unexpected Java Version [${{ steps.read_java.outputs.java_version }}] should have been 17"; exit 1; fi

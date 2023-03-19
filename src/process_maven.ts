@@ -44,7 +44,7 @@ function process(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultT
         }
     )
 
-    result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'mvn.cmd' : './mvnw') : 'mvn');
+    result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'mvnw.cmd' : './mvnw') : 'mvn');
     result.set('cmd_test', result.get('cmd') + ' clean test verify -B');
     result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B');
     result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B');
