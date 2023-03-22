@@ -3,6 +3,7 @@ import {PathOrFileDescriptor} from "fs";
 import {ResultType} from './common_processing';
 import {runMaven} from './process_maven';
 import {runGradle} from './process_gradle';
+import {runJenvAsdf} from "./process_jenv_asdf";
 
 const core = require('@actions/core');
 const fs = require('fs');
@@ -70,15 +71,18 @@ function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, dee
     result.set('platform', process.platform);
 
     //PROCESSING
+    runJenvAsdf(result, workDir, deep);
     runMaven(result, workDir, deep);
     runGradle(result, workDir, deep);
 
     //POST PROCESSING
     result.set('project_version', result.get('project_version') || pvFallback || null);
     result.set('project_encoding', result.get('project_encoding') || peFallback || null);
-    if (!(result.get('java_version') as number) && jvFallback > 0) {
+    let jv = result.get('java_version') as number;
+    if (!jv && jvFallback > 0) {
         result.set('java_version', jvFallback);
-        result.set('java_version_legacy', jvFallback < 10 ? `1.${jvFallback}` : jvFallback.toString());
+    } else if (jv) {
+        result.set('java_version_legacy', jv < 10 ? `1.${jv}` : jv.toString());
     }
     return result;
 }

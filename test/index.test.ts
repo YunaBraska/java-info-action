@@ -156,6 +156,16 @@ test('[GRADLE] artifact_name && artifact_name_jar', () => {
     expect(result_lv.get('artifact_name_jar')).toEqual("my-spring-boot-app.jar")
 });
 
+test('[JENV|ASDF] read .java-version and .tool-versions', () => {
+    let java_version_8 = main.run(null, path.join(__dirname, 'resources/jenv/java_8'), -1, -1, null, null);
+    expect(java_version_8.get('java_version')).toEqual(8)
+    expect(java_version_8.get('java_version_legacy')).toEqual('1.8')
+
+    let java_version_12 = main.run(null, path.join(__dirname, 'resources/jenv/java_12'), -1, -1, null, null);
+    expect(java_version_12.get('java_version')).toEqual(12)
+    expect(java_version_12.get('java_version_legacy')).toEqual('12')
+});
+
 function createEmptyDir(dir: PathOrFileDescriptor): PathOrFileDescriptor {
     if (!fs.existsSync(dir.toString())) {
         fs.mkdirSync(dir.toString());

@@ -6,6 +6,8 @@ and encoding.
 It also provides essential build commands and properties to make your development process more independent, efficient
 and streamlined.
 
+**JENV** `.java-version` and **ASDF** `.tool-versions` is supported as well.
+
 *Does not use any maven / gradle commands*
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=HFHFUT3G6TZF6)

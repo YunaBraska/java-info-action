@@ -130,7 +130,6 @@ function setJavaVersion(result: Map<string, ResultType>, propertyMap: Map<string
         const javaVersion = Math.max(...javaVersions);
         if (javaVersion && (!result.get('java_version') || (result.get('java_version') as number) < javaVersion)) {
             result.set('java_version', javaVersion);
-            result.set('java_version_legacy', javaVersion < 10 ? `1.${javaVersion}` : javaVersion.toString());
         }
     }
 }
