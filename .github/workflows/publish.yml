@@ -11,7 +11,7 @@ on:
         required: false
 
 jobs:
-  publish:
+  publish_node:
     name: "Node Update & Test & Publish"
     uses: YunaBraska/YunaBraska/.github/workflows/wc_node_publish.yml@main
     with:
