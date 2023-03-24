@@ -25,10 +25,15 @@ jobs:
     with:
       ref: ${{ inputs.ref || github.ref_name || github.head_ref }}
   show_case:
+    needs: node_test
     name: "Show Case"
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
+      - name: "Checkout [${{ inputs.ref || github.ref_name || github.head_ref }}]"
+        uses: actions/checkout@main
+        with:
+          ref: ${{ inputs.ref || github.ref_name || github.head_ref }}
       - name: "Get Java Version"
         id: "read_java"
         uses: YunaBraska/java-info-action@main
