@@ -12,8 +12,8 @@ on:
 
 jobs:
   publish:
-    name: "Node Update & Publish"
-    uses: YunaBraska/YunaBraska/.github/workflows/wc_node_test.yml@main
+    name: "Node Update & Test & Publish"
+    uses: YunaBraska/YunaBraska/.github/workflows/wc_node_publish.yml@main
     with:
       ref: ${{ inputs.ref || github.ref_name || github.head_ref }}
       mastodon_suffix: '#GitHubActions #java #maven #gradle #workflow #github #githubactions #githubaction @github'

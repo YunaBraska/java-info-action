@@ -19,7 +19,7 @@ on:
       required: false
 
 jobs:
-  test:
+  node_test:
     name: "Node Test"
     uses: YunaBraska/YunaBraska/.github/workflows/wc_node_test.yml@main
     with:
