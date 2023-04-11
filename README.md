@@ -38,21 +38,24 @@ and streamlined.
     jv-fallback: 17
     pv-fallback: '0.0.1'
     pe-fallback: 'utf-8'
+    custom-gradle-cmd: "clean build"
+    custom-maven-cmd: "clean package"
 
   # PRINT
 - name: "Print Java Version"
   run: |
-    echo "java_version [${{ steps.java_info.outputs.java_version }}]"
-    echo "artifact_name [${{ steps.java_info.outputs.artifact_name }}]"
-    echo "project_version [${{ steps.java_info.outputs.project_version }}]"
-    echo "project_encoding [${{ steps.java_info.outputs.project_encoding }}]"
-    echo "is_gradle [${{ steps.java_info.outputs.is_gradle }}]"
-    echo "is_maven [${{ steps.java_info.outputs.is_maven }}]"
-    echo "has_wrapper [${{ steps.java_info.outputs.has_wrapper }}]"
-    echo "builder_name [${{ steps.java_info.outputs.builder_name }}]"
-    echo "x_sourceCompatibility [${{ steps.java_info.outputs.x_sourceCompatibility }}]"
-    echo "x_project_build_finalName [${{ steps.java_info.outputs.x_project_build_finalName }}]"
-    echo "x_groovyOptions_encoding [${{ steps.java_info.outputs.x_groovyOptions_encoding }}]"
+    echo "java_version                     [${{ steps.java_info.outputs.java_version }}]"
+    echo "artifact_name                    [${{ steps.java_info.outputs.artifact_name }}]"
+    echo "project_version                  [${{ steps.java_info.outputs.project_version }}]"
+    echo "project_encoding                 [${{ steps.java_info.outputs.project_encoding }}]"
+    echo "cmd_custom                       [${{ steps.java_info.outputs.cmd_custom }}]"
+    echo "is_gradle                        [${{ steps.java_info.outputs.is_gradle }}]"
+    echo "is_maven                         [${{ steps.java_info.outputs.is_maven }}]"
+    echo "has_wrapper                      [${{ steps.java_info.outputs.has_wrapper }}]"
+    echo "builder_name                     [${{ steps.java_info.outputs.builder_name }}]"
+    echo "x_sourceCompatibility            [${{ steps.java_info.outputs.x_sourceCompatibility }}]"
+    echo "x_project_build_finalName        [${{ steps.java_info.outputs.x_project_build_finalName }}]"
+    echo "x_groovyOptions_encoding         [${{ steps.java_info.outputs.x_groovyOptions_encoding }}]"
     echo "x_net_minidev_json-smart_version [${{ steps.java_info.outputs.x_project_dependencies_dependency_net_minidev_json-smart_version }}]"
 
   # SETUP JAVA
@@ -72,13 +75,16 @@ and streamlined.
 
 ### Inputs
 
-| parameter   | default      | description                                                      |
-|-------------|--------------|------------------------------------------------------------------|
-| work-dir    | '.'          | folder scan ('.' == current)                                     |
-| deep        | -1           | folder scan deep (-1 == endless)                                 |
-| jv-fallback | <Latest_LTS> | fallback for "java_version" if no java version was found         |
-| pv-fallback | null         | fallback for "project_version" if no project version was found   |
-| pe-fallback | utf-8        | fallback for "project_encoding" if no project encoding was found |
+| parameter         | default      | description                                                                         |
+|-------------------|--------------|-------------------------------------------------------------------------------------|
+| work-dir          | '.'          | folder scan ('.' == current)                                                        |
+| deep              | -1           | folder scan deep (-1 == endless)                                                    |
+| jv-fallback       | <Latest_LTS> | fallback for "java_version" if no java version was found                            |
+| pv-fallback       | null         | fallback for "project_version" if no project version was found                      |
+| pe-fallback       | utf-8        | fallback for "project_encoding" if no project encoding was found                    |
+| custom-maven-cmd  | ''           | custom command for output "cmd_custom" which adds automatically gradle/maven prefix |
+| custom-gradle-cmd | ''           | custom command for output "cmd_custom" which adds automatically gradle/maven prefix |
+| null-to-empty     | ''           | converts null to empty string                                                       |
 
 ### Outputs
 
@@ -96,6 +102,7 @@ and streamlined.
 | artifact_name       | -            | artifact name if defined e.g. "archiveFileName, baseName, finalName"                                                        |
 | artifact_name_jar   | -            | artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"                                     |
 | cmd                 | -            | command e.g. <br>*  gradle / gradlew / gradle.bat <br>*  mvn / mvnw / mvn.bat                                               |
+| cmd_custom          | -            | Concatenation of 'cmd' + 'custom-gradle-cmd' or 'custom-maven-cmd'                                                          |
 | cmd_test            | -            | command e.g. <br>*  gradle clean test <br>*  mvn clean test                                                                 |
 | cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                                        |
 | cmd_test_build      | -            | command e.g. <br>*  gradle clean build  <br>*  mvn clean package                                                            |

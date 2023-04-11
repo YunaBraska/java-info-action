@@ -47,6 +47,7 @@ function process(gradleFiles: PathOrFileDescriptor[], result: Map<string, Result
         }
     )
     result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'gradle.bat' : './gradlew') : 'gradle');
+    result.set('cmd_custom', result.get('cmd') + ' ' + result.get('custom-gradle-cmd'));
     result.set('cmd_test', result.get('cmd') + ' clean test');
     result.set('cmd_build', result.get('cmd') + ' clean build -x test');
     result.set('cmd_test_build', result.get('cmd') + ' clean build');

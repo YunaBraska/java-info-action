@@ -21,6 +21,16 @@ inputs:
     description: 'project encoding fallback if no project encoding was found'
     required: false
     default: 'null'
+  custom-gradle-cmd:
+    required: false
+    description: 'custom command for output "cmd_custom" which adds automatically gradle/maven prefix'
+  custom-maven-cmd:
+    required: false
+    description: 'custom command for output "cmd_custom" which adds automatically gradle/maven prefix'
+  null-to-empty:
+    description: 'converts null to empty string'
+    required: false
+    default: 'true'
 outputs:
   java_version:
     description: 'java version - parsed from build files e.g. 6,7,8,9,10,11'
@@ -50,6 +60,8 @@ outputs:
     description: 'artifact names ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"'
   cmd:
     description: 'build command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat'
+  cmd_custom:
+    description: "Concatenation of 'cmd' + 'custom-gradle-cmd' or 'custom-maven-cmd'"
   cmd_test:
     description: 'build command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat'
   cmd_build:

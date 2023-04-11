@@ -22,6 +22,22 @@ const JAVA_VERSION_PROPS = [
     'project.build.plugins.plugin.org.apache.maven.plugins.maven-compiler-plugin.configuration.release'
 ];
 
+export function isEmpty(input: string | number | boolean | null | undefined): boolean {
+    return input === null || input === undefined || String(input).trim().length === 0;
+}
+
+export function replaceNullWithEmptyMap(input: Map<string, any>): Map<string, any> {
+    const output = new Map<string, any>();
+    input.forEach((value, key) => {
+        if (value === null || value === undefined || value === 'null') {
+            output.set(key, '');
+        } else {
+            output.set(key, value);
+        }
+    });
+    return output;
+}
+
 export function setCommonResults(result: Map<string, ResultType>, propertyMap: Map<string, string>): Map<string, ResultType> {
     resolvePropertyMap(propertyMap);
     setProjectVersion(result, propertyMap);

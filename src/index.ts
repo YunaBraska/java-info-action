@@ -1,6 +1,6 @@
 //https://github.com/actions/toolkit/tree/main/packages/
 import {PathOrFileDescriptor} from "fs";
-import {ResultType} from './common_processing';
+import {isEmpty, replaceNullWithEmptyMap, ResultType} from './common_processing';
 import {runMaven} from './process_maven';
 import {runGradle} from './process_gradle';
 import {runJenvAsdf} from "./process_jenv_asdf";
@@ -9,6 +9,7 @@ const core = require('@actions/core');
 const fs = require('fs');
 //https://api.adoptium.net/v3/info/available_releases
 //TODO: auto update java & gradle versions
+//TODO nullToEmpty input
 const JAVA_LTS_VERSION = '17';
 
 try {
@@ -16,6 +17,9 @@ try {
     let jvFallback = core.getInput('jv-fallback') || JAVA_LTS_VERSION;
     let pvFallback = core.getInput('pv-fallback') || null;
     let peFallback = core.getInput('pe-fallback') || 'utf-8';
+    let customGradleCmd = core.getInput('custom-gradle-cmd') || '';
+    let customGradleMaven = core.getInput('custom-gradle-cmd') || '';
+    let nullToEmpty = core.getInput('null-to-empty') || null;
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
     if (!workDir || workDir === ".") {
@@ -24,8 +28,19 @@ try {
     let result = new Map<string, ResultType>([
         ['GITHUB_WORKSPACE', workspace || null]
     ]);
-    run(result, workDir, deep, jvFallback, pvFallback, peFallback);
-    console.log(JSON.stringify(Object.fromEntries(sortMap(result)), null, 4))
+    run(
+        result,
+        workDir,
+        deep,
+        jvFallback,
+        pvFallback,
+        peFallback,
+        customGradleCmd,
+        customGradleMaven,
+        !isEmpty(nullToEmpty) ? nullToEmpty.toLowerCase() === 'true' : true,
+    );
+
+    console.log(JSON.stringify(Object.fromEntries(result), null, 4))
 
     result.forEach((value, key) => {
         core.setOutput(key, value);
@@ -38,7 +53,17 @@ try {
     }
 }
 
-function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, deep: number, jvFallback: number, pvFallback: number, peFallback: string): Map<string, ResultType> {
+function run(
+    result: Map<string, ResultType>,
+    workDir: PathOrFileDescriptor,
+    deep: number,
+    jvFallback: number,
+    pvFallback: number,
+    peFallback: string,
+    customGradleCmd: string,
+    customMavenCmd: string,
+    nullToEmpty: boolean,
+): Map<string, ResultType> {
     //PRE PROCESSING
     deep = !deep ? 1 : deep;
     result = !result ? new Map<string, ResultType>([]) : result;
@@ -68,6 +93,9 @@ function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, dee
     result.set('jv-fallback', jvFallback);
     result.set('pv-fallback', pvFallback);
     result.set('pe-fallback', peFallback);
+    result.set('custom-gradle-cmd', customGradleCmd?.trim() || '');
+    result.set('custom-maven-cmd', customMavenCmd?.trim() || '');
+    result.set('null-to-empty', nullToEmpty);
     result.set('platform', process.platform);
 
     //PROCESSING
@@ -84,7 +112,8 @@ function run(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, dee
     } else if (jv) {
         result.set('java_version_legacy', jv < 10 ? `1.${jv}` : jv.toString());
     }
-    return result;
+    result.set('builder_version', result.get('builder_version') || null)
+    return sortMap(nullToEmpty ? replaceNullWithEmptyMap(result) : result);
 }
 
 function getWorkingDirectory(workspace: string | undefined | null): PathOrFileDescriptor {

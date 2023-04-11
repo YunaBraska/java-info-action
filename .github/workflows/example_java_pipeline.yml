@@ -1,0 +1,22 @@
+name: "Build & Test"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@main
+      - name: "Read Java Info"
+        id: "java_info"
+        uses: YunaBraska/java-info-action@main
+      - name: "Setup Java [${{ steps.java_info.outputs.java_version }}]"
+        uses: actions/setup-java@main
+        with:
+          java-version: ${{ steps.java_info.outputs.java_version }}
+          distribution: 'adopt'
+      - name: "Test & Build [${{ steps.java_info.outputs.builder_name }}]"
+        run: ${{ steps.java_info.outputs.cmd_test_build }}
