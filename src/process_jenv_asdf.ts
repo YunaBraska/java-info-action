@@ -11,7 +11,7 @@ export function runJenvAsdf(result: Map<string, ResultType>, workDir: PathOrFile
 }
 
 export function listJenvAsdfFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
-    return listFiles(workDir, deep, '^(\.java.version|\.tool.versions)$', [], 0);
+    return listFiles(workDir, deep, '^(\\.java.version|\\.tool.versions)$', [], 0);
 }
 
 function process(jenvAsdfFiles: PathOrFileDescriptor[], result: Map<string, ResultType>): Map<string, ResultType> {

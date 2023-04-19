@@ -26,6 +26,24 @@ export function isEmpty(input: string | number | boolean | null | undefined): bo
     return input === null || input === undefined || String(input).trim().length === 0;
 }
 
+export function str(result: string | number | boolean | null | undefined): string {
+    return (result ?? '').toString();
+}
+
+export function int(result: string | number | boolean | null | undefined): number {
+    if (typeof result === 'number') {
+        return result;
+    } else if (typeof result === 'string') {
+        const parsedInt = Number.parseInt(result, 10);
+        if (Number.isNaN(parsedInt)) {
+            return 0;
+        }
+        return parsedInt;
+    } else {
+        return 0;
+    }
+}
+
 export function replaceNullWithEmptyMap(input: Map<string, any>): Map<string, any> {
     const output = new Map<string, any>();
     input.forEach((value, key) => {

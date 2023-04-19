@@ -6,6 +6,11 @@ const maven = require('../src/process_maven')
 const path = require('path');
 const fs = require('fs');
 
+afterAll(() => {
+    // Update shield demo
+    main.run(null, path.join(process.cwd()), -1, -1, null, null, null, null, true);
+});
+
 // ########## GRADLE ##########
 
 test('[GRADLE] Read empty dir', () => {

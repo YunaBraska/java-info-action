@@ -1,15 +1,15 @@
 //https://github.com/actions/toolkit/tree/main/packages/
 import {PathOrFileDescriptor} from "fs";
-import {isEmpty, replaceNullWithEmptyMap, ResultType} from './common_processing';
+import {int, isEmpty, replaceNullWithEmptyMap, ResultType} from './common_processing';
 import {runMaven} from './process_maven';
 import {runGradle} from './process_gradle';
 import {runJenvAsdf} from "./process_jenv_asdf";
+import {updateBadges} from "./badges_shield_updater";
 
 const core = require('@actions/core');
 const fs = require('fs');
 //https://api.adoptium.net/v3/info/available_releases
 //TODO: auto update java & gradle versions
-//TODO nullToEmpty input
 const JAVA_LTS_VERSION = '17';
 
 try {
@@ -107,12 +107,15 @@ function run(
     result.set('project_version', result.get('project_version') || pvFallback || null);
     result.set('project_encoding', result.get('project_encoding') || peFallback || null);
     let jv = result.get('java_version') as number;
-    if (!jv && jvFallback > 0) {
+    if (!jv && int(jvFallback) > 0) {
         result.set('java_version', jvFallback);
-    } else if (jv) {
+    }
+    jv = result.get('java_version') as number;
+    if (jv) {
         result.set('java_version_legacy', jv < 10 ? `1.${jv}` : jv.toString());
     }
     result.set('builder_version', result.get('builder_version') || null)
+    updateBadges(result, workDir, deep);
     return sortMap(nullToEmpty ? replaceNullWithEmptyMap(result) : result);
 }
 

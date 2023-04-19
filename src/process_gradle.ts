@@ -15,7 +15,7 @@ export function runGradle(result: Map<string, ResultType>, workDir: PathOrFileDe
 }
 
 export function listGradleFiles(workDir: PathOrFileDescriptor, deep: number): PathOrFileDescriptor[] {
-    return listFiles(workDir, deep, 'build\.gradle.*', [], 0);
+    return listFiles(workDir, deep, 'build\\.gradle.*', [], 0);
 }
 
 export function readBuilderVersion(wrapperMapFile: PathOrFileDescriptor, fallback: string | null): string | null {
