@@ -46,9 +46,9 @@ function process(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultT
 
     result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'mvnw.cmd' : './mvnw') : 'mvn');
     result.set('cmd_custom', result.get('cmd') + ' ' + result.get('custom-maven-cmd'));
-    result.set('cmd_test', result.get('cmd') + ' clean test verify -B');
-    result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B');
-    result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B');
+    result.set('cmd_test', result.get('cmd') + ' clean test verify -B -q');
+    result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B -q');
+    result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B -q');
     result.set('cmd_update_deps', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
     result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');

@@ -114,7 +114,7 @@ and streamlined.
 | cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
 | cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
 | cmd_resolve_plugs   | -            | command e.g. <br> *  gradle --refresh-dependencies check -x test <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true |
-| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version \<Latest_LTS>  <br>*  mvn -B -q wrapper:wrapper                             |
+| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version latest  <br>*  mvn -B -q wrapper:wrapper                                    |
 | x_\<propertyKey>    | -            | other unhandled build script properties. These differs between maven an gradle                                              |
 
 ### \[DEV] Setup Environment

@@ -3,7 +3,6 @@ import {addKeyValue, listFiles, ResultType, setCommonResults} from './common_pro
 import path from "path";
 //https://services.gradle.org/versions/all
 //https://gradle.org/releases/
-const GRADLE_LTS_VERSION = '8.0.2';
 
 export function runGradle(result: Map<string, ResultType>, workDir: PathOrFileDescriptor, deep: number) {
     let files = listGradleFiles(workDir, deep);
@@ -57,7 +56,7 @@ function process(gradleFiles: PathOrFileDescriptor[], result: Map<string, Result
     result.set('cmd_update_parent', result.get('cmd') + ' check');
     result.set('cmd_resolve_plugs', result.get('cmd') + ' check');
     result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
-    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version ' + GRADLE_LTS_VERSION);
+    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version latest');
     return result;
 }
 

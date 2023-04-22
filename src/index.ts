@@ -9,7 +9,6 @@ import {updateBadges} from "./badges_shield_updater";
 const core = require('@actions/core');
 const fs = require('fs');
 //https://api.adoptium.net/v3/info/available_releases
-//TODO: auto update java & gradle versions
 const JAVA_LTS_VERSION = '17';
 
 try {
