@@ -66,6 +66,7 @@ export function updateBadges(result: Map<string, ResultType>, workDir: string | 
         // Write the updated content back to the file
         if (content !== fileContentOrg) {
             writeFileSync(file, content, 'utf-8');
+            console.debug(`Saved file [${file}]`)
         }
     });
 }
@@ -73,21 +74,23 @@ export function updateBadges(result: Map<string, ResultType>, workDir: string | 
 function updateLink(file: PathOrFileDescriptor, key: string, value: string, match: string, link: string) {
     let color: string;
     if (isEmpty(value)) {
-        value = 'not_available';
-        color = red;
-        console.warn(`Badges/Shields Updater: key [${key}] does not match any output variable. File [${file}]`)
+        // value = 'not_available';
+        // color = red;
+        //do not replace anything as it could come from a different action
+        return match;
     } else {
         color = SHIELD_COLORS.get(key) || orange;
         color = setColor(key, value, isEmpty(color) ? orange : color);
-    }
-
-    //format key
-    key = clearKeyOrValue(key)
-    // Replace the link with the new value
-    if (match.toLowerCase().includes('shields.io')) {
-        return match.replace(link, `${key}-${value}-${color}`);
-    } else if (match.toLowerCase().includes('badgen.net')) {
-        return match.replace(link, `${key}/${value}/${color}`);
+        //format key
+        key = clearKeyOrValue(key)
+        // Replace the link with the new value
+        if (match.toLowerCase().includes('shields.io')) {
+            console.debug(`Updated [shields.io] key [${key}] file [${file}]`)
+            return match.replace(link, `${key}-${value}-${color}`);
+        } else if (match.toLowerCase().includes('badgen.net')) {
+            console.debug(`Updated [badgen.net] key [${key}] file [${file}]`)
+            return match.replace(link, `${key}/${value}/${color}`);
+        }
     }
     return match
 }
