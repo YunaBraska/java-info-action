@@ -80,7 +80,7 @@ outputs:
     description: 'test command e.g. gradle gradle wrapper --gradle-version latest / maven -B -q -N io.takari:maven:wrapper'
 runs:
   using: 'node16'
-  main: 'lib/index.js'
+  main: 'dist/index.js'
 branding:
   icon: file-text
   color: purple
