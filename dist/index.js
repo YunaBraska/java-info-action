@@ -333,7 +333,7 @@ try {
     let pvFallback = core.getInput('pv-fallback') || null;
     let peFallback = core.getInput('pe-fallback') || 'utf-8';
     let customGradleCmd = core.getInput('custom-gradle-cmd') || '';
-    let customGradleMaven = core.getInput('custom-gradle-cmd') || '';
+    let customGradleMaven = core.getInput('custom-maven-cmd') || '';
     let nullToEmpty = core.getInput('null-to-empty') || null;
     let deep = parseInt(core.getInput('deep')) || 1;
     let workspace = ((_a = process.env['GITHUB_WORKSPACE']) === null || _a === void 0 ? void 0 : _a.toString()) || null;
