@@ -187,12 +187,12 @@ test('Custom command [GRADLE/MAVEN]', () => {
     let result_gradle = main.run(null, path.join(__dirname, 'resources/gradle/source/subproject'), -1, -1, null, null, 'clean build native', null, true);
     expect(result_gradle.get('custom-gradle-cmd')).toEqual('clean build native')
     expect(result_gradle.get('custom-maven-cmd')).toEqual('')
-    expect(result_gradle.get('cmd_custom')).toEqual('./gradlew clean build native')
+    expect(result_gradle.get('cmd_custom')).toEqual(process.platform === "win32" ? 'gradle.bat clean build native' : './gradlew clean build native')
 
     let result_maven = main.run(null, path.join(__dirname, 'resources/maven/m_source/subproject'), -1, -1, null, null, null, 'clean build native', true);
     expect(result_maven.get('custom-maven-cmd')).toEqual('clean build native')
     expect(result_maven.get('custom-gradle-cmd')).toEqual('')
-    expect(result_maven.get('cmd_custom')).toEqual('./mvnw clean build native')
+    expect(result_maven.get('cmd_custom')).toEqual(process.platform === "win32" ? 'mvnw.cmd clean build native' : './mvnw clean build native')
 });
 
 function createEmptyDir(dir: PathOrFileDescriptor): PathOrFileDescriptor {

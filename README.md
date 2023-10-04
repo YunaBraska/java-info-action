@@ -22,7 +22,7 @@ and streamlined.
 
 ### Features
 
-* *This action does not use any maven / gradle commands*
+* *This action does not use any maven / gradle commands* therefore no java, maven or gradle is needed.
 * **JENV** `.java-version` and **ASDF** `.tool-versions` will be taken as a fallback
 * update Shields/Badges see [ShieldsDemo](./ShieldDemo.md)
 

@@ -1214,7 +1214,7 @@ class OidcClient {
                 .catch(error => {
                 throw new Error(`Failed to get ID Token. \n 
         Error Code : ${error.statusCode}\n 
-        Error Message: ${error.message}`);
+        Error Message: ${error.result.message}`);
             });
             const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
             if (!id_token) {
@@ -2621,7 +2621,6 @@ function isLoopbackAddress(host) {
   } catch (ex) {
     Stream = function () {}
   }
-  if (!Stream) Stream = function () {}
 
   var streamWraps = sax.EVENTS.filter(function (ev) {
     return ev !== 'error' && ev !== 'end'
@@ -3940,16 +3939,9 @@ function isLoopbackAddress(host) {
           }
 
           if (c === ';') {
-            if (parser.opt.unparsedEntities) {
-              var parsedEntity = parseEntity(parser)
-              parser.entity = ''
-              parser.state = returnState
-              parser.write(parsedEntity)
-            } else {
-              parser[buffer] += parseEntity(parser)
-              parser.entity = ''
-              parser.state = returnState
-            }
+            parser[buffer] += parseEntity(parser)
+            parser.entity = ''
+            parser.state = returnState
           } else if (isMatch(parser.entity.length ? entityBody : entityStart, c)) {
             parser.entity += c
           } else {
@@ -3961,9 +3953,8 @@ function isLoopbackAddress(host) {
 
           continue
 
-        default: /* istanbul ignore next */ {
+        default:
           throw new Error(parser, 'Unknown state: ' + parser.state)
-        }
       }
     } // while
 
