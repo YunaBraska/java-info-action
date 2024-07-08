@@ -482,11 +482,11 @@ function process(gradleFiles, result) {
     result.set('cmd_test', result.get('cmd') + ' clean test');
     result.set('cmd_build', result.get('cmd') + ' clean build -x test');
     result.set('cmd_test_build', result.get('cmd') + ' clean build');
-    result.set('cmd_update_deps', result.get('cmd') + ' check');
-    result.set('cmd_update_plugs', result.get('cmd') + ' check');
-    result.set('cmd_update_props', result.get('cmd') + ' check');
-    result.set('cmd_update_parent', result.get('cmd') + ' check');
-    result.set('cmd_resolve_plugs', result.get('cmd') + ' check');
+    result.set('cmd_update_deps', result.get('cmd') + '  --version');
+    result.set('cmd_update_plugs', result.get('cmd') + '  --version');
+    result.set('cmd_update_props', result.get('cmd') + '  --version');
+    result.set('cmd_update_parent', result.get('cmd') + '  --version');
+    result.set('cmd_resolve_plugs', result.get('cmd') + '  --version');
     result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
     result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 8.8');
     return result;
