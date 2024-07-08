@@ -49,10 +49,10 @@ function process(mavenFiles: PathOrFileDescriptor[], result: Map<string, ResultT
     result.set('cmd_test', result.get('cmd') + ' clean test verify -B -q');
     result.set('cmd_build', result.get('cmd') + ' clean package -DskipTests -B -q');
     result.set('cmd_test_build', result.get('cmd') + ' clean test verify package -B -q');
-    result.set('cmd_update_deps', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false');
-    result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false');
+    result.set('cmd_update_deps', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|M[0-9]+).*"');
+    result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|M[0-9]+).*"');
+    result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|M[0-9]+).*"');
+    result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|M[0-9]+).*"');
     result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins -B -q');
     result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve -B -q');
     result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q wrapper:wrapper');
