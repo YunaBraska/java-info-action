@@ -79,7 +79,7 @@ outputs:
   cmd_update_wrapper:
     description: 'test command e.g. gradle gradle wrapper --gradle-version latest / maven -B -q -N io.takari:maven:wrapper'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
 branding:
   icon: file-text
