@@ -488,7 +488,7 @@ function process(gradleFiles, result) {
     result.set('cmd_update_parent', result.get('cmd') + '  --version');
     result.set('cmd_resolve_plugs', result.get('cmd') + '  --version');
     result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
-    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 8.9');
+    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 8.10');
     return result;
 }
 function readPropertiesGradle(file) {
@@ -2419,11 +2419,11 @@ function getProxyUrl(reqUrl) {
     })();
     if (proxyVar) {
         try {
-            return new URL(proxyVar);
+            return new DecodedURL(proxyVar);
         }
         catch (_a) {
             if (!proxyVar.startsWith('http://') && !proxyVar.startsWith('https://'))
-                return new URL(`http://${proxyVar}`);
+                return new DecodedURL(`http://${proxyVar}`);
         }
     }
     else {
@@ -2481,6 +2481,19 @@ function isLoopbackAddress(host) {
         hostLower.startsWith('127.') ||
         hostLower.startsWith('[::1]') ||
         hostLower.startsWith('[0:0:0:0:0:0:0:1]'));
+}
+class DecodedURL extends URL {
+    constructor(url, base) {
+        super(url, base);
+        this._decodedUsername = decodeURIComponent(super.username);
+        this._decodedPassword = decodeURIComponent(super.password);
+    }
+    get username() {
+        return this._decodedUsername;
+    }
+    get password() {
+        return this._decodedPassword;
+    }
 }
 //# sourceMappingURL=proxy.js.map
 
