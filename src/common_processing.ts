@@ -17,6 +17,9 @@ const JAVA_VERSION_PROPS = [
     'languageVersion',
     'sourceCompatibility',
     'targetCompatibility',
+    'maven.compiler.source',
+    'maven.compiler.target',
+    'maven.compiler.release',
     'project.build.plugins.plugin.org.apache.maven.plugins.maven-compiler-plugin.configuration.source',
     'project.build.plugins.plugin.org.apache.maven.plugins.maven-compiler-plugin.configuration.target',
     'project.build.plugins.plugin.org.apache.maven.plugins.maven-compiler-plugin.configuration.release'

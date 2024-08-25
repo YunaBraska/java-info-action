@@ -148,6 +148,10 @@ test('[MAVEN] Read highest Java Version with deep limit 1 should be 11', () => {
     expect(result_release.get('cmd')).toEqual('mvn')
 });
 
+test('[MAVEN] maven java version property only', () => {
+    let result_source = main.run(null, path.join(__dirname, 'resources/maven/m_target/prop_2_java-version_11'), 1, -1, null, null, null, null, true);
+});
+
 test('[MAVEN] Read each file should have expected result', () => {
     (maven.listMavenFiles(path.dirname(__filename), -1) as PathOrFileDescriptor[]).forEach(file => {
         let dir = path.dirname(file.toString());
