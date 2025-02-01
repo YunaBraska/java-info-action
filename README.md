@@ -6,6 +6,8 @@ and encoding.
 It also provides essential build commands and properties to make your development process more independent, efficient
 and streamlined.
 
+_List of dependencies and their licenses: [licenses.csv](https://github.com/YunaBraska/java-info-action/blob/main/licenses.csv)._
+
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/YunaBraska)
 
 [![Build][build_shield]][build_link]
@@ -120,10 +122,10 @@ and streamlined.
 
 ### \[DEV] Setup Environment
 
-* Build: `npm run build` to "compile" `index.ts` to `./lib/index.js`
+* Use NodeJs 20
+* Build: `npm run build` to "compile" `index.ts` to `./lib/index.js` && generate `licenses.csv`
 * Test: `npm run test`
 * _clean environment: `./clean_node.sh`_
-* NodeJs 16: do not upgrade nodeJs as GitHub actions latest version is 16
 
 [build_shield]: https://github.com/YunaBraska/java-info-action/workflows/RELEASE/badge.svg
 
@@ -161,4 +163,4 @@ and streamlined.
 
 [gitter_link]: https://gitter.im/java-info-action/Lobby
 
-[node_version]: https://img.shields.io/badge/node-16-blueviolet?style=flat-square
+[node_version]: https://img.shields.io/badge/node-20-blueviolet?style=flat-square
