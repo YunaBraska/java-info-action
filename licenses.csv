@@ -7,5 +7,5 @@
 "java-info-action@1.0.0","Apache*","https://github.com/YunaBraska/java-info-action"
 "sax@1.4.1","ISC","https://github.com/isaacs/sax-js"
 "tunnel@0.0.6","MIT","https://github.com/koichik/node-tunnel"
-"undici@5.28.5","MIT","https://github.com/nodejs/undici"
+"undici@5.29.0","MIT","https://github.com/nodejs/undici"
 "xmldoc@1.3.0","MIT","https://github.com/nfarina/xmldoc"
