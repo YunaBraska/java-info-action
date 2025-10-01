@@ -65,9 +65,9 @@ outputs:
   cmd_test:
     description: 'build command e.g. gradle, gradlew, gradle.bat, mvn, mvnw, mvn.bat'
   cmd_build:
-    description: 'test command e.g. gradle clean build -x test / maven clean package -DskipTests'
+    description: 'test command e.g. gradle clean build -x test / maven clean verify -DskipTests'
   cmd_test_build:
-    description: 'test command e.g. gradle clean build / maven clean package'
+    description: 'test command e.g. gradle clean build / maven clean verify'
   cmd_update_deps:
     description: 'test command e.g. gradle check / maven versions:use-latest-versions -B -q -DgenerateBackupPoms=false'
   cmd_update_plugs:
