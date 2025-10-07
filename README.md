@@ -93,32 +93,32 @@ _List of dependencies and their licenses: [licenses.csv](https://github.com/Yuna
 
 ### Outputs
 
-| Name                | default      | description                                                                                                                 |
-|---------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------|
-| java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                                                   |
-| java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                                                           |
-| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                                        |
-| project_encoding    | null         | project encoding - parsed from build files e.g. utf-8                                                                       |
-| has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                                                |
-| builder_name        | null         | Name of the builder \[Gradle, Maven, null]                                                                                  |
-| builder_version     | null         | version of the wrapper                                                                                                      |
-| is_gradle           | false        | true if a gradle build file was found                                                                                       |
-| is_maven            | false        | true if a maven build file was found                                                                                        |
-| artifact_name       | -            | artifact name if defined e.g. "archiveFileName, baseName, finalName"                                                        |
-| artifact_name_jar   | -            | artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"                                     |
-| cmd                 | -            | command e.g. <br>*  gradle / gradlew / gradle.bat <br>*  mvn / mvnw / mvn.bat                                               |
-| cmd_custom          | -            | Concatenation of 'cmd' + 'custom-gradle-cmd' or 'custom-maven-cmd'                                                          |
-| cmd_test            | -            | command e.g. <br>*  gradle clean test <br>*  mvn clean test                                                                 |
-| cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                                        |
-| cmd_test_build      | -            | command e.g. <br>*  gradle clean build  <br>*  mvn clean package                                                            |
-| cmd_update_deps     | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                  |
-| cmd_update_plugs    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false                  |
-| cmd_update_props    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-properties -B -q -DgenerateBackupPoms=false                    |
-| cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false                        |
-| cmd_resolve_deps    | -            | command e.g. <br>*  gradle check  <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true                                |
-| cmd_resolve_plugs   | -            | command e.g. <br> *  gradle --refresh-dependencies check -x test <br>*  mvn -B -q dependency:resolve -Dmaven.test.skip=true |
-| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version latest  <br>*  mvn -B -q wrapper:wrapper                                    |
-| x_\<propertyKey>    | -            | other unhandled build script properties. These differs between maven an gradle                                              |
+| Name                | default      | description                                                                                                |
+|---------------------|--------------|------------------------------------------------------------------------------------------------------------|
+| java_version        | <Latest_LTS> | java version - parsed from build files e.g. 6,7,8,9,10,11                                                  |
+| java_version_legacy | <Latest_LTS> | java version - parsed from build files e.g. 1.6,1.7,1.8,1.9,10,11                                          |
+| project_version     | null         | project version - parsed from build files e.g. 1.2.3                                                       |
+| project_encoding    | null         | project encoding - parsed from build files e.g. utf-8                                                      |
+| has_wrapper         | false        | if a wrapper exists - e.g. gradlew, mvnw,...                                                               |
+| builder_name        | null         | Name of the builder \[Gradle, Maven, null]                                                                 |
+| builder_version     | null         | version of the wrapper                                                                                     |
+| builder_folder      | null         | build folder                                                                                               |
+| is_gradle           | false        | true if a gradle build file was found                                                                      |
+| is_maven            | false        | true if a maven build file was found                                                                       |
+| artifact_name       | -            | artifact name if defined e.g. "archiveFileName, baseName, finalName"                                       |
+| artifact_name_jar   | -            | artifact name ending with ".jar" if defined e.g. "archiveFileName, baseName, finalName"                    |
+| cmd                 | -            | command e.g. <br>*  gradle / gradlew / gradle.bat <br>*  mvn / mvnw / mvn.bat                              |
+| cmd_custom          | -            | Concatenation of 'cmd' + 'custom-gradle-cmd' or 'custom-maven-cmd'                                         |
+| cmd_test            | -            | command e.g. <br>*  gradle clean test <br>*  mvn clean test                                                |
+| cmd_build           | -            | command e.g. <br>*  gradle clean build -x test  <br>*  mvn clean package -DskipTests                       |
+| cmd_test_build      | -            | command e.g. <br>*  gradle clean build  <br>*  mvn clean package                                           |
+| cmd_update_deps     | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false |
+| cmd_update_plugs    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:use-latest-versions -B -q -DgenerateBackupPoms=false |
+| cmd_update_props    | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-properties -B -q -DgenerateBackupPoms=false   |
+| cmd_update_parent   | -            | command e.g. <br>*  gradle check  <br>*  mvn versions:update-parent -B -q -DgenerateBackupPoms=false       |
+| cmd_resolve_deps    | -            | command e.g. <br>*  gradle --refresh-dependencies  <br>*  mvn -B -q dependency:go-offline -B -q            |
+| cmd_update_wrapper  | -            | command  <br>*  gradle wrapper --gradle-version latest  <br>*  mvn -B -q wrapper:wrapper                   |
+| x_\<propertyKey>    | -            | other unhandled build script properties. These differs between maven an gradle                             |
 
 ### \[DEV] Setup Environment
 

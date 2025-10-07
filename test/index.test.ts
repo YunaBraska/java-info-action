@@ -168,6 +168,7 @@ test('[MAVEN] Read each file should have expected result', () => {
         expect(result.get('is_maven')).toEqual(true)
         expect(result.get('builder_name')).toEqual('Maven')
         expect(result.get('builder_version')).toEqual(hasWrapper ? '3.6.3' : null)
+        expect(result.get('builder_folder')).toEqual('target')
         expect(result.get('null-to-empty')).toEqual(false);
         expect(result.get('cmd')).toEqual(hasWrapper ? (process.platform === "win32" ? 'mvnw.cmd' : './mvnw') : 'mvn')
     });

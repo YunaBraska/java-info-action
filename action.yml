@@ -78,6 +78,8 @@ outputs:
     description: 'test command e.g. gradle check / maven versions:update-parent -B -q -DgenerateBackupPoms=false'
   cmd_update_wrapper:
     description: 'test command e.g. gradle gradle wrapper --gradle-version latest / maven -B -q -N io.takari:maven:wrapper'
+  cmd_resolve_deps:
+    description: 'command to resolve dependencies e.g. gradle --refresh-dependencies / maven -B dependency:go-offline'
 runs:
   using: 'node20'
   main: 'dist/index.js'

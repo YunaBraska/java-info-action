@@ -480,6 +480,7 @@ function process(gradleFiles, result) {
             console.error(err);
         }
     });
+    result.set('builder_folder', "build");
     result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'gradle.bat' : './gradlew') : 'gradle');
     result.set('cmd_custom', result.get('cmd') + ' ' + result.get('custom-gradle-cmd'));
     result.set('cmd_test', result.get('cmd') + ' clean test');
@@ -488,8 +489,7 @@ function process(gradleFiles, result) {
     result.set('cmd_update_deps', result.get('cmd') + '  --version');
     result.set('cmd_update_plugs', result.get('cmd') + '  --version');
     result.set('cmd_update_props', result.get('cmd') + '  --version');
-    result.set('cmd_update_parent', result.get('cmd') + '  --version');
-    result.set('cmd_resolve_plugs', result.get('cmd') + '  --version');
+    result.set('cmd_update_parent', result.get('cmd') + ' --refresh-dependencies');
     result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
     result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 9.1.0');
     return result;
@@ -613,6 +613,7 @@ function process(mavenFiles, result) {
             console.error(err);
         }
     });
+    result.set('builder_folder', "target");
     result.set('cmd', result.get('has_wrapper') ? (result.get('platform') === "win32" ? 'mvnw.cmd' : './mvnw') : 'mvn');
     result.set('cmd_custom', result.get('cmd') + ' ' + result.get('custom-maven-cmd'));
     result.set('cmd_test', result.get('cmd') + ' clean test -B -q');
@@ -622,8 +623,7 @@ function process(mavenFiles, result) {
     result.set('cmd_update_plugs', result.get('cmd') + ' versions:use-latest-versions -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|RC[0-9]+|M[0-9]+).*"');
     result.set('cmd_update_props', result.get('cmd') + ' versions:update-properties -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|RC[0-9]+|M[0-9]+).*"');
     result.set('cmd_update_parent', result.get('cmd') + ' versions:update-parent -B -q -DgenerateBackupPoms=false -Dmaven.version.ignore=".+-(alpha|beta|RC[0-9]+|M[0-9]+).*"');
-    result.set('cmd_resolve_plugs', result.get('cmd') + ' dependency:resolve-plugins -B -q');
-    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:resolve -B -q');
+    result.set('cmd_resolve_deps', result.get('cmd') + ' dependency:go-offline -B -q');
     result.set('cmd_update_wrapper', result.get('cmd') + ' -B -q wrapper:wrapper');
     return result;
 }
