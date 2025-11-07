@@ -4639,7 +4639,7 @@ function copyFile(srcFile, destFile, force) {
               XML_NAMESPACE +
               '\n' +
               'Actual: ' +
-              parser.attribValue,
+              parser.attribValue
           )
         } else if (
           local === 'xmlns' &&
@@ -4651,7 +4651,7 @@ function copyFile(srcFile, destFile, force) {
               XMLNS_NAMESPACE +
               '\n' +
               'Actual: ' +
-              parser.attribValue,
+              parser.attribValue
           )
         } else {
           var tag = parser.tag
@@ -4693,7 +4693,7 @@ function copyFile(srcFile, destFile, force) {
       if (tag.prefix && !tag.uri) {
         strictFail(
           parser,
-          'Unbound namespace prefix: ' + JSON.stringify(parser.tagName),
+          'Unbound namespace prefix: ' + JSON.stringify(parser.tagName)
         )
         tag.uri = qn.prefix
       }
@@ -4732,7 +4732,7 @@ function copyFile(srcFile, destFile, force) {
         if (prefix && prefix !== 'xmlns' && !uri) {
           strictFail(
             parser,
-            'Unbound namespace prefix: ' + JSON.stringify(prefix),
+            'Unbound namespace prefix: ' + JSON.stringify(prefix)
           )
           a.uri = prefix
         }
@@ -4858,7 +4858,12 @@ function copyFile(srcFile, destFile, force) {
       }
     }
     entity = entity.replace(/^0+/, '')
-    if (isNaN(num) || numStr.toLowerCase() !== entity) {
+    if (
+      isNaN(num) ||
+      numStr.toLowerCase() !== entity ||
+      num < 0 ||
+      num > 0x10ffff
+    ) {
       strictFail(parser, 'Invalid character entity')
       return '&' + parser.entity + ';'
     }
@@ -4895,7 +4900,7 @@ function copyFile(srcFile, destFile, force) {
     if (parser.closed) {
       return error(
         parser,
-        'Cannot write after close. Assign an onready handler.',
+        'Cannot write after close. Assign an onready handler.'
       )
     }
     if (chunk === null) {
@@ -5047,7 +5052,7 @@ function copyFile(srcFile, destFile, force) {
             if (parser.doctype || parser.sawRoot) {
               strictFail(
                 parser,
-                'Inappropriately located doctype declaration',
+                'Inappropriately located doctype declaration'
               )
             }
             parser.doctype = ''
@@ -5260,7 +5265,7 @@ function copyFile(srcFile, destFile, force) {
           } else {
             strictFail(
               parser,
-              'Forward-slash in opening tag not followed by >',
+              'Forward-slash in opening tag not followed by >'
             )
             parser.state = S.ATTRIB
           }
