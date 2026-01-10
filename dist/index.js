@@ -4122,10 +4122,9 @@ function copyFile(srcFile, destFile, force) {
       Buffer.isBuffer(data)
     ) {
       if (!this._decoder) {
-        var SD = (__nccwpck_require__(1576).StringDecoder)
-        this._decoder = new SD('utf8')
+        this._decoder = new TextDecoder('utf8')
       }
-      data = this._decoder.write(data)
+      data = this._decoder.decode(data, { stream: true })
     }
 
     this._parser.write(data.toString())
@@ -4136,6 +4135,14 @@ function copyFile(srcFile, destFile, force) {
   SAXStream.prototype.end = function (chunk) {
     if (chunk && chunk.length) {
       this.write(chunk)
+    }
+    // Flush any remaining decoded data from the TextDecoder
+    if (this._decoder) {
+      var remaining = this._decoder.decode()
+      if (remaining) {
+        this._parser.write(remaining)
+        this.emit('data', remaining)
+      }
     }
     this._parser.end()
     return true
@@ -5413,7 +5420,7 @@ function copyFile(srcFile, destFile, force) {
           } else if (isMatch(nameBody, c)) {
             parser.tagName += c
           } else if (parser.script) {
-            parser.script += '</' + parser.tagName
+            parser.script += '</' + parser.tagName + c
             parser.tagName = ''
             parser.state = S.SCRIPT
           } else {
