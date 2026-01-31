@@ -56,7 +56,7 @@ function process(gradleFiles: PathOrFileDescriptor[], result: Map<string, Result
     result.set('cmd_update_props', result.get('cmd') + '  --version');
     result.set('cmd_update_parent', result.get('cmd') + ' --refresh-dependencies');
     result.set('cmd_resolve_deps', result.get('cmd') + ' --refresh-dependencies check -x test');
-    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 9.3.0');
+    result.set('cmd_update_wrapper', result.get('cmd') + ' wrapper --gradle-version 9.3.1');
     return result;
 }
 
