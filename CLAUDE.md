@@ -110,4 +110,4 @@ The system handles multiple Java version formats:
 - Tests wrapper detection, version extraction, and command generation
 
 ## Node.js Version
-The project uses Node.js 20 and is configured as a GitHub Action that runs on `node20`.
+The project uses Node.js 24 and is configured as a GitHub Action that runs on `node24`.

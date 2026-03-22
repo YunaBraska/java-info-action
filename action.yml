@@ -81,7 +81,7 @@ outputs:
   cmd_resolve_deps:
     description: 'command to resolve dependencies e.g. gradle --refresh-dependencies / maven -B dependency:go-offline'
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
 branding:
   icon: file-text
