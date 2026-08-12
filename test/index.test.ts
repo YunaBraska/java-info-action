@@ -1,5 +1,4 @@
 import {PathOrFileDescriptor} from "fs";
-import request from "sync-request";
 
 const main = require('../src/index')
 const gradle = require('../src/process_gradle')
@@ -7,23 +6,7 @@ const maven = require('../src/process_maven')
 const path = require('path');
 const fs = require('fs');
 
-afterAll(() => {
-    // Update shield demo
-    main.run(null, path.join(process.cwd()), -1, -1, null, null, null, null, true);
-});
-
 // ########## GRADLE ##########
-
-test('[GRADLE] Update Wrapper Command', async () => {
-    // Update the production code with the latest version
-    const latestGradleVersion = JSON.parse(request('GET', 'https://services.gradle.org/versions/current').getBody('utf8')).version;
-    const filePath = path.join(__dirname, '../src/process_gradle.ts');
-    let fileContent = fs.readFileSync(filePath, { encoding: 'utf-8' });
-
-    // Replace the old version with the new one
-    fileContent = fileContent.replace(/' wrapper --gradle-version .*'/, `' wrapper --gradle-version ${latestGradleVersion}'`);
-    fs.writeFileSync(filePath, fileContent);
-});
 
 test('[GRADLE] Read empty dir', () => {
     let dir = createEmptyDir(path.join(__dirname, 'resources/gradle/empty'));
@@ -230,6 +213,5 @@ function projectVersionOfPath(pathString: string): string | null {
     let regexResult = new RegExp('(\\d[\\.]){2,}\\d').exec(pathString);
     return regexResult !== null ? regexResult[0] : null
 }
-
 
 

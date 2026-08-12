@@ -11,44 +11,47 @@ const fs = require('fs');
 //https://api.adoptium.net/v3/info/available_releases
 const JAVA_LTS_VERSION = '17';
 
-try {
-    let workDir = core.getInput('work-dir');
-    let jvFallback = core.getInput('jv-fallback') || JAVA_LTS_VERSION;
-    let pvFallback = core.getInput('pv-fallback') || null;
-    let peFallback = core.getInput('pe-fallback') || 'utf-8';
-    let customGradleCmd = core.getInput('custom-gradle-cmd') || '';
-    let customGradleMaven = core.getInput('custom-maven-cmd') || '';
-    let nullToEmpty = core.getInput('null-to-empty') || null;
-    let deep = parseInt(core.getInput('deep')) || 1;
-    let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
-    if (!workDir || workDir === ".") {
-        workDir = getWorkingDirectory(workspace)
-    }
-    let result = new Map<string, ResultType>([
-        ['GITHUB_WORKSPACE', workspace || null]
-    ]);
-    run(
-        result,
-        workDir,
-        deep,
-        jvFallback,
-        pvFallback,
-        peFallback,
-        customGradleCmd,
-        customGradleMaven,
-        !isEmpty(nullToEmpty) ? nullToEmpty.toLowerCase() === 'true' : true,
-    );
+if (require.main === module) {
+    try {
+        let workDir = core.getInput('work-dir');
+        let jvFallback = core.getInput('jv-fallback') || JAVA_LTS_VERSION;
+        let pvFallback = core.getInput('pv-fallback') || null;
+        let peFallback = core.getInput('pe-fallback') || 'utf-8';
+        let customGradleCmd = core.getInput('custom-gradle-cmd') || '';
+        let customGradleMaven = core.getInput('custom-maven-cmd') || '';
+        let nullToEmpty = core.getInput('null-to-empty') || null;
+        let deep = parseInt(core.getInput('deep')) || 1;
+        let workspace = process.env['GITHUB_WORKSPACE']?.toString() || null;
+        if (!workDir || workDir === ".") {
+            workDir = getWorkingDirectory(workspace)
+        }
+        let result = new Map<string, ResultType>([
+            ['GITHUB_WORKSPACE', workspace || null]
+        ]);
+        run(
+            result,
+            workDir,
+            deep,
+            jvFallback,
+            pvFallback,
+            peFallback,
+            customGradleCmd,
+            customGradleMaven,
+            !isEmpty(nullToEmpty) ? nullToEmpty.toLowerCase() === 'true' : true,
+            true,
+        );
 
-    console.log(JSON.stringify(Object.fromEntries(result), null, 4))
+        console.log(JSON.stringify(Object.fromEntries(result), null, 4))
 
-    result.forEach((value, key) => {
-        core.setOutput(key, value);
-    })
-} catch (e) {
-    if (typeof e === "string") {
-        core.setFailed(e.toUpperCase());
-    } else if (e instanceof Error) {
-        core.setFailed(e.message);
+        result.forEach((value, key) => {
+            core.setOutput(key, value);
+        })
+    } catch (e) {
+        if (typeof e === "string") {
+            core.setFailed(e.toUpperCase());
+        } else if (e instanceof Error) {
+            core.setFailed(e.message);
+        }
     }
 }
 
@@ -62,6 +65,7 @@ function run(
     customGradleCmd: string,
     customMavenCmd: string,
     nullToEmpty: boolean,
+    updateBadgesOnRun: boolean = false,
 ): Map<string, ResultType> {
     //PRE PROCESSING
     deep = !deep ? 1 : deep;
@@ -114,7 +118,9 @@ function run(
         result.set('java_version_legacy', jv < 10 ? `1.${jv}` : jv.toString());
     }
     result.set('builder_version', result.get('builder_version') || null)
-    updateBadges(result, workDir, deep);
+    if (updateBadgesOnRun) {
+        updateBadges(result, workDir, deep);
+    }
     return sortMap(nullToEmpty ? replaceNullWithEmptyMap(result) : result);
 }
 
